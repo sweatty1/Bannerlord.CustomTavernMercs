@@ -146,8 +146,12 @@ namespace MinorClanTroopRecruitment
 
 		private bool conversation_minor_clan_mercenary_recruit_plural_start_on_condition()
 		{
+			if(PlayerEncounter.Settlement == null || !PlayerEncounter.Settlement.IsTown)
+			{
+				return false;
+			}
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			bool flag = CharacterObject.OneToOneConversationCharacter.IsSoldier && PlayerEncounter.Settlement != null && PlayerEncounter.Settlement.IsTown && minorMercData.Number > 1 && minorClanMercGuardIsInTavern();
+			bool flag = minorMercData.Number > 1 && minorClanMercGuardIsInTavern() && CharacterObject.OneToOneConversationCharacter.IsSoldier;
 			if (flag)
 			{
 				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, Hero.MainHero, false);
@@ -160,8 +164,12 @@ namespace MinorClanTroopRecruitment
 
 		private bool conversation_minor_clan_mercenary_recruit_single_start_on_condition()
 		{
+			if (PlayerEncounter.Settlement == null || !PlayerEncounter.Settlement.IsTown)
+			{
+				return false;
+			}
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			bool flag = CharacterObject.OneToOneConversationCharacter.IsSoldier && PlayerEncounter.Settlement != null && PlayerEncounter.Settlement.IsTown && minorMercData.Number == 1 && minorClanMercGuardIsInTavern();
+			bool flag = minorMercData.Number == 1 && minorClanMercGuardIsInTavern() && CharacterObject.OneToOneConversationCharacter.IsSoldier;
 			if (flag)
 			{
 				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, Hero.MainHero, false);
