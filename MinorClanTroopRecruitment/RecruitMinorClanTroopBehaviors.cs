@@ -8,7 +8,7 @@ using TaleWorlds.CampaignSystem.GameMenus;
 
 namespace MinorClanTroopRecruitment
 {
-    internal class RecruitMinorClanTroopBehaviors : CampaignBehaviorBase
+	internal class RecruitMinorClanTroopBehaviors : CampaignBehaviorBase
     {
 		public MinorClanMercDataHolder mc_merc_data = null;
 
@@ -75,7 +75,6 @@ namespace MinorClanTroopRecruitment
 			CharacterObject basicTroopObject = Game.Current.ObjectManager.GetObject<CharacterObject>(basicTroopId.ToString());
 			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject, false);
 			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(basicTroopObject, numbOfUnits);
-			// InformationManager.DisplayMessage(new InformationMessage($"Updated town: {town.Name} with troop {basicTroopId} count of {numbOfUnits} from clan: {mc_merc_data.minorClanList[r].Name}"));
 		}
 
 		public void OnSessionLaunched(CampaignGameStarter campaignGameStarter)
@@ -125,19 +124,24 @@ namespace MinorClanTroopRecruitment
 			//campaignGameStarter.AddDialogLine("guard_start", "start", "close_window", "I DRINK BEER", new ConversationSentence.OnConditionDelegate(this.minormercTavernTalk), null, 150, null);
 			// priority = higher takes presidence if equal first one added if condition isn't met will pass to next priority
 			// priority also makes it so that if two prompts are present on that the higher one is higher on the list
-			// campaignGameStarter.AddDialogLine("guard_start", "start", "minor_clan_mercenary_talk_start", "You want da bois", new ConversationSentence.OnConditionDelegate(this.minormercTavernTalk), null, 150, null);
-			campaignGameStarter.AddDialogLine("guard_start", "start", "minor_clan_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? Me and {?PLURAL}{MERCENARY_COUNT} of my mates{?}one of my mates{\\?} looking for a master. You might call us mercenaries, like. We'll join you for {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_plural_start_on_condition), null, 150, null);
-			campaignGameStarter.AddDialogLine("guard_start", "start", "minor_clan_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? I am looking for a master. I'll join you for {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_single_start_on_condition), null, 150, null);
-			campaignGameStarter.AddPlayerLine("mercenary_recruit_accept_mod", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?PLURAL}all of you{?}you{\\?}. Here is {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_on_consequence), 100, null, null);
-			campaignGameStarter.AddPlayerLine("mercenary_recruit_accept_some_mod", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT} of you. Here is {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_consequence), 100, null, null);
-			campaignGameStarter.AddPlayerLine("mercenary_recruit_reject_gold_mod", "minor_clan_mercenary_tavern_talk", "close_window", "That sounds good. But I can't hire any more men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_reject_gold_or_party_size_on_condition), null, 100, null, null);
-			campaignGameStarter.AddPlayerLine("mercenary_recruit_reject_mod", "minor_clan_mercenary_tavern_talk", "close_window", "Sorry. I don't need any other men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_dont_need_men_on_condition), null, 100, null, null);
-			campaignGameStarter.AddDialogLine("mercenary_recruit_end_mod", "minor_clan_mercenary_tavern_talk_hire", "close_window", "{RANDOM_HIRE_SENTENCE}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_end_on_condition), null, 100, null);
-			campaignGameStarter.AddDialogLine("guard_start", "start", "close_window", "Don't worry, I'll be ready. Just having a last drink for the road.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruited_on_condition), null, 150, null);
+			// not that start is start token for all converstaions and it goes down the priority to see the first start that returns true for the ConversationSentence.OnConditionDelegate 
+			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_start_plural", "start", "minor_clan_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? Me and {?PLURAL}{MERCENARY_COUNT} of my mates{?}one of my mates{\\?} looking for a master. You might call us mercenaries, like. We'll join you for {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_plural_start_on_condition), null, 150, null);
+			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_start_singlular", "start", "minor_clan_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? I am looking for a master. I'll join you for {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_single_start_on_condition), null, 150, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_all", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?PLURAL}all of you{?}you{\\?}. Here is {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_on_consequence), 100, null, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT} of you. Here is {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_consequence), 100, null, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_reject_no_gold", "minor_clan_mercenary_tavern_talk", "close_window", "That sounds good. But I can't hire any more men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_reject_gold_or_party_size_on_condition), null, 100, null, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_reject_party_full", "minor_clan_mercenary_tavern_talk", "close_window", "Sorry. I don't need any other men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_dont_need_men_on_condition), null, 100, null, null);
+			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_hired_end", "minor_clan_mercenary_tavern_talk_hire", "close_window", "{RANDOM_HIRE_SENTENCE}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_end_on_condition), null, 100, null);
+			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_start_post_hire", "start", "close_window", "Don't worry, I'll be ready. Just having a last drink for the road.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruited_on_condition), null, 150, null);
 		}
-		private bool minorClanMercGuardIsInTavern()
+		private bool minorClanMercGuardIsInTavern(MinorClanMercData minorMercData)
 		{
-			return CampaignMission.Current.Location.StringId == "tavern";
+			if (CampaignMission.Current == null || CampaignMission.Current.Location == null)
+			{
+				return false;
+			}
+
+			return CampaignMission.Current.Location.StringId == "tavern" && minorMercData.TroopType.Name == CharacterObject.OneToOneConversationCharacter.Name && CharacterObject.OneToOneConversationCharacter.IsSoldier;
 		}
 		private MinorClanMercData getMinorMercDataOfPlayerEncounter()
 		{
@@ -151,7 +155,7 @@ namespace MinorClanTroopRecruitment
 				return false;
 			}
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			bool flag = minorMercData.Number > 1 && minorClanMercGuardIsInTavern() && CharacterObject.OneToOneConversationCharacter.IsSoldier;
+			bool flag = minorMercData.Number > 1 && minorClanMercGuardIsInTavern(minorMercData);
 			if (flag)
 			{
 				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, Hero.MainHero, false);
@@ -169,7 +173,7 @@ namespace MinorClanTroopRecruitment
 				return false;
 			}
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			bool flag = minorMercData.Number == 1 && minorClanMercGuardIsInTavern() && CharacterObject.OneToOneConversationCharacter.IsSoldier;
+			bool flag = minorMercData.Number == 1 && minorClanMercGuardIsInTavern(minorMercData);
 			if (flag)
 			{
 				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, Hero.MainHero, false);
@@ -189,12 +193,16 @@ namespace MinorClanTroopRecruitment
 
 		private bool conversation_minor_clan_mercenary_recruited_on_condition()
 		{
-			return CharacterObject.OneToOneConversationCharacter.IsSoldier && PlayerEncounter.Settlement != null && minorClanMercGuardIsInTavern();
+			if (PlayerEncounter.Settlement == null || !PlayerEncounter.Settlement.IsTown)
+			{
+				return false;
+			}
+			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
+			return minorClanMercGuardIsInTavern(minorMercData);
 		}
 
 		private void BuyMinorClanMercenariesInTavern()
 		{
-
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
 			minorMercData.ChangeMercenaryCount(-this._selectedMinorClanMercCount);
 			int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, Hero.MainHero, false);
@@ -255,6 +263,7 @@ namespace MinorClanTroopRecruitment
 
 		//Interaction of the Tavern from the Game Menu tested to work on 1.4.1
 		// these variables have these names otherwise if say MEN_COUNT would override the 1.4.1 Game Menu for normal mercs
+		// TODO ADD options to buy to max group count instead of going over
 		private bool BuyMinorClanMercsViaMenuCondition(MenuCallbackArgs args)
 		{
 			MinorClanMercData minorMercData = mc_merc_data.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
