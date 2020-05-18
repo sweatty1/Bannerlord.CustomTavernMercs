@@ -75,7 +75,6 @@ namespace MinorClanTroopRecruitment
 			CharacterObject basicTroopObject = Game.Current.ObjectManager.GetObject<CharacterObject>(basicTroopId.ToString());
 			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject, false);
 			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(basicTroopObject, numbOfUnits);
-			// InformationManager.DisplayMessage(new InformationMessage($"Updated town: {town.Name} with troop {basicTroopId} count of {numbOfUnits} from clan: {mc_merc_data.minorClanList[r].Name}"));
 		}
 
 		public void OnSessionLaunched(CampaignGameStarter campaignGameStarter)
@@ -139,12 +138,9 @@ namespace MinorClanTroopRecruitment
 		{
 			if (CampaignMission.Current == null || CampaignMission.Current.Location == null)
 			{
-				//InformationManager.DisplayMessage(new InformationMessage($"Either Campaignmission.current is null or the .location is null"));
 				return false;
 			}
-			//InformationManager.DisplayMessage(new InformationMessage($"Name of guy who talking {CharacterObject.OneToOneConversationCharacter.Name}"));
-			//InformationManager.DisplayMessage(new InformationMessage($"Name for town recruitment {minorMercData.TroopType.Name}"));
-			//InformationManager.DisplayMessage(new InformationMessage($"Checking if in tavern OLD WAY {CampaignMission.Current.Location.StringId}"));
+
 			return CampaignMission.Current.Location.StringId == "tavern" && minorMercData.TroopType.Name == CharacterObject.OneToOneConversationCharacter.Name && CharacterObject.OneToOneConversationCharacter.IsSoldier;
 		}
 		private MinorClanMercData getMinorMercDataOfPlayerEncounter()
@@ -207,7 +203,6 @@ namespace MinorClanTroopRecruitment
 
 		private void BuyMinorClanMercenariesInTavern()
 		{
-
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
 			minorMercData.ChangeMercenaryCount(-this._selectedMinorClanMercCount);
 			int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, Hero.MainHero, false);
