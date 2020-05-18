@@ -43,4 +43,11 @@ Or make the spawning be weekly instead of daily.
 
 the SubModule.xml being a copy of the one inside of this projects SubModuleXML folder and the MinorClanTroopRecruitment.dll being from the build output of the project
 
-You can build a new dll with your changes and move it into the Win64_Shipping_Client folder and run the Bannerlord launcher (just make sure on the mod tab the mod checkbox is ticked)
+Easier way todo the above is to follow the install instructions.
+
+The Refernces will be missing. Right click refernces select add then browse and navigate to C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client and select the taleworlds.*.dll needed
+Note: some dlls are found in base game Module folders like C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\StoryMode\bin\Win64_Shipping_Client\SotryMode.dll which is not present in the base bin\Win64_Shipping_Client
+
+Build a new dll with your changes and move it into the Win64_Shipping_Client folder and run the Bannerlord launcher (just make sure on the mod tab the mod checkbox is ticked)
+
+To remove the manual copy/paste change the build output path to the Win64_Shipping_Client.
