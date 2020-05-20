@@ -5,7 +5,6 @@ using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.Localization;
 using TaleWorlds.CampaignSystem.SandBox;
 using TaleWorlds.CampaignSystem.GameMenus;
-using System.Xml.Serialization;
 
 namespace MinorClanTroopRecruitment
 {
@@ -24,16 +23,36 @@ namespace MinorClanTroopRecruitment
 			CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnSessionLaunched));
 		}
 
+		// Only triggers on loaded games
 		private void OnGameLoaded(CampaignGameStarter campaignGameStarter)
 		{
 			if (mc_merc_data == null)
 			{
 				MinorClanMercDataHolder clanMercData = new MinorClanMercDataHolder();
 				this.mc_merc_data = clanMercData;
+				foreach (Town town in Town.AllTowns)
+				{
+					this.UpdateCurrentMercenaryTroopAndCount(town, true);
+				}
 			}
+			// Add Character if inside of town
 			if (Settlement.CurrentSettlement != null && !Hero.MainHero.IsPrisoner && LocationComplex.Current != null)
 			{
 				this.AddMinorClanMercenaryCharacterToTavern(Settlement.CurrentSettlement);
+			}
+		}
+
+		// Only triggers on new campaigns created
+		public void OnAfterNewGameCreated()
+		{
+			if (mc_merc_data == null)
+			{
+				MinorClanMercDataHolder clanMercData = new MinorClanMercDataHolder();
+				this.mc_merc_data = clanMercData;
+				foreach (Town town in Town.AllTowns)
+				{
+					this.UpdateCurrentMercenaryTroopAndCount(town, true);
+				}
 			}
 		}
 
@@ -66,19 +85,6 @@ namespace MinorClanTroopRecruitment
 		}
 
 		// Update minorMerc troops
-		public void OnAfterNewGameCreated()
-		{
-			if (mc_merc_data == null)
-			{
-				MinorClanMercDataHolder clanMercData = new MinorClanMercDataHolder();
-				this.mc_merc_data = clanMercData;
-			}
-			foreach (Town town in Town.AllTowns)
-			{
-				this.UpdateCurrentMercenaryTroopAndCount(town, true);
-			}
-		}
-
 		private void DailyTickTown(Town town)
 		{
 			this.UpdateCurrentMercenaryTroopAndCount(town, (int)CampaignTime.Now.ToDays % 2 == 0);
@@ -131,8 +137,8 @@ namespace MinorClanTroopRecruitment
 			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_start_plural", "start", "minor_clan_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? Me and {?PLURAL}{MERCENARY_COUNT} of my mates{?}one of my mates{\\?} looking for a master. You might call us mercenaries, like. We'll join you for {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_plural_start_on_condition), null, 150, null);
 			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_start_singlular", "start", "minor_clan_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? I am looking for a master. I'll join you for {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_single_start_on_condition), null, 150, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_all", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?PLURAL}all of you{?}you{\\?}. Here is {GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_consequence), 100, null, null);
-			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_all_past_limit", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?PLURAL}all of you{?}you{\\?}. Here is {GOLD_AMOUNT}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_condition_past_limit), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_consequence), 100, null, null);
-			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some_past_limit", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT_SOME_AFFORD} of you. Here is {GOLD_AMOUNT_SOME_AFFORD}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition_past_limit_afford), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_past_limit_on_consequence), 100, null, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_all_past_limit", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?PLURAL}all of you{?}you{\\?}. Here is {GOLD_AMOUNT}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_condition_past_limit), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_consequence), 110, null, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some_past_limit", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT_SOME_AFFORD} of you. Here is {GOLD_AMOUNT_SOME_AFFORD}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition_past_limit_afford), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_past_limit_on_consequence), 110, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT_SOME} of you. Here is {GOLD_AMOUNT_SOME}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_consequence), 100, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_reject_no_gold", "minor_clan_mercenary_tavern_talk", "close_window", "That sounds good. But I can't hire any more men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_reject_gold_or_party_size_on_condition), null, 100, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_reject_party_full", "minor_clan_mercenary_tavern_talk", "close_window", "Sorry. I don't need any other men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_dont_need_men_on_condition), null, 100, null, null);
@@ -142,7 +148,7 @@ namespace MinorClanTroopRecruitment
 
 		private bool minorClanMercGuardIsInTavern(MinorClanMercData minorMercData)
 		{
-			if (CampaignMission.Current == null || CampaignMission.Current.Location == null)
+			if (CampaignMission.Current == null || CampaignMission.Current.Location == null || minorMercData.TroopType == null)
 			{
 				return false;
 			}
@@ -252,12 +258,17 @@ namespace MinorClanTroopRecruitment
 		private bool conversation_minor_clan_mercenary_recruit_accept_some_on_condition_past_limit_afford()
 		{
 			int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(getMinorMercDataOfPlayerEncounter().TroopType, Hero.MainHero, false);
+			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			if (Hero.MainHero.Gold >= troopRecruitmentCost && Hero.MainHero.Gold < getMinorMercDataOfPlayerEncounter().Number * troopRecruitmentCost)
 			{
 				int numberToHire = 0;
 				while (Hero.MainHero.Gold > troopRecruitmentCost * (numberToHire + 1) && getMinorMercDataOfPlayerEncounter().Number > numberToHire)
 				{
 					numberToHire++;
+				}
+				if (numberToHire <= numOfTroopSlotsOpen)
+				{
+					return false;
 				}
 				MBTextManager.SetTextVariable("MERCENARY_COUNT_SOME_AFFORD", numberToHire, false);
 				MBTextManager.SetTextVariable("GOLD_AMOUNT_SOME_AFFORD", troopRecruitmentCost * numberToHire, false);
@@ -315,10 +326,6 @@ namespace MinorClanTroopRecruitment
 		// these variables have these names otherwise if say MEN_COUNT would override the 1.4.1 Game Menu for normal mercs
 		public void AddGameMenus(CampaignGameStarter campaignGameStarter)
 		{
-			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_regular_mercenaries_party_limit", "{=*}Recruit to Party Limit {REG_MEN_COUNT_PL} {REG_MERCENARY_NAME_PL} ({REG_TOTAL_AMOUNT_PL}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(this.BuyRegMercsViaMenuConditionToPartyLimit), delegate (MenuCallbackArgs x)
-			{
-				BuyRegMercenariesViaGameMenuToPartyLimit();
-			}, false, 1, false);
 			// index is location in menu 0 being top, 1 next if other of same index exist this are placed on top of them
 			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_minor_clan_mercenaries_all", "{=*}Recruit {MC_MEN_COUNT} {MC_MERCENARY_NAME} ({MC_TOTAL_AMOUNT}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(this.BuyMinorClanMercsViaMenuCondition), delegate (MenuCallbackArgs x)
 			{
@@ -399,45 +406,6 @@ namespace MinorClanTroopRecruitment
 					MobileParty.MainParty.MemberRoster.AddToCounts(minorMercData.TroopType, numOfMercs, false, 0, 0, true, -1);
 					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
 					minorMercData.ChangeMercenaryCount(-numOfMercs);
-					GameMenu.SwitchToMenu("town_backstreet");
-				}
-			}
-		}
-
-		private bool BuyRegMercsViaMenuConditionToPartyLimit(MenuCallbackArgs args) 
-		{
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData != null && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number > 0)
-			{
-				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType, null, false);
-				int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
-				int numOfTroopPlayerCanBuy = Hero.MainHero.Gold / troopRecruitmentCost;
-				if (numOfTroopSlotsOpen > 0 && Hero.MainHero.Gold >= troopRecruitmentCost && numOfTroopSlotsOpen < MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number && numOfTroopSlotsOpen < numOfTroopPlayerCanBuy)
-				{
-					int numOfMercs = Math.Min(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number, numOfTroopPlayerCanBuy);
-					numOfMercs = Math.Min(numOfTroopSlotsOpen, numOfMercs);
-					MBTextManager.SetTextVariable("REG_MEN_COUNT_PL", numOfMercs, false);
-					MBTextManager.SetTextVariable("REG_MERCENARY_NAME_PL", MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType.Name, false);
-					MBTextManager.SetTextVariable("REG_TOTAL_AMOUNT_PL", numOfMercs * troopRecruitmentCost, false);
-					args.optionLeaveType = GameMenuOption.LeaveType.RansomAndBribe;
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private static void BuyRegMercenariesViaGameMenuToPartyLimit()
-		{
-			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData != null && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number > 0 && numOfTroopSlotsOpen > 0)
-			{
-				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType, null, false);
-				if (Hero.MainHero.Gold >= troopRecruitmentCost)
-				{
-					int numOfMercs = Math.Min(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number, Hero.MainHero.Gold / troopRecruitmentCost);
-					numOfMercs = Math.Min(numOfTroopSlotsOpen, numOfMercs);
-					MobileParty.MainParty.MemberRoster.AddToCounts(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType, numOfMercs, false, 0, 0, true, -1);
-					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
-					MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.ChangeMercenaryCount(-numOfMercs);
 					GameMenu.SwitchToMenu("town_backstreet");
 				}
 			}

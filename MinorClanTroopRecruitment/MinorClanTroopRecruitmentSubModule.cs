@@ -23,7 +23,6 @@ namespace MinorClanTroopRecruitment
             base.OnGameStart(game, gameStarterObject);
             if(game.GameType is Campaign && ((CampaignStoryMode)game.GameType).CampaignGameLoadingType != Campaign.GameLoadingType.NewCampaign)
             {
-                Campaign campaign = game.GameType as Campaign;
                 CampaignGameStarter gameInitializer = (CampaignGameStarter)gameStarterObject;
                 AddBehaviors(gameInitializer);
             }
@@ -32,6 +31,7 @@ namespace MinorClanTroopRecruitment
         private void AddBehaviors(CampaignGameStarter gameInitializer)
         {
             gameInitializer.AddBehavior(new RecruitMinorClanTroopBehaviors());
+            gameInitializer.AddBehavior(new EnchanceBaseMercRecruitment());
         }
     }
 }
