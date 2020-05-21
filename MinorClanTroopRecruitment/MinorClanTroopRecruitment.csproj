@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnchanceBaseMercRecruitment.cs" />
     <Compile Include="MinorClanMercData.cs" />
     <Compile Include="MinorClanMercDataHolder.cs" />
     <Compile Include="MinorClanTroopRecruitmentSubModule.cs" />
