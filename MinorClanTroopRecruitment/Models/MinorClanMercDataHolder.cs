@@ -19,7 +19,7 @@ namespace MinorClanTroopRecruitment
             {
                 if (clan.IsMinorFaction && clan != Clan.PlayerClan)
                 {
-                    minorClanList.Add(clan);
+                    minorClanList.Add(clan); // don't forget hidden minor clan "Kern"
                 }
             }
             this.minorClanList = minorClanList;
