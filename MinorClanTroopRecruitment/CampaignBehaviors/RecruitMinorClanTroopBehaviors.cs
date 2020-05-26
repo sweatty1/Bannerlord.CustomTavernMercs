@@ -91,17 +91,15 @@ namespace MinorClanTroopRecruitment
 		}
 		
 
-		private static int FindNumberOfMercenariesWillBeAdded(BasicCharacterObject character, bool dailyUpdate = false)
+		private static int FindNumberOfMercenariesWillBeAdded(BasicCharacterObject character)
 		{
-			int level = character.Level;
-			int num = MBRandom.RoundRandomized((float)(100.0 / Math.Sqrt((double)level)));
-			float randomFloat = MBRandom.RandomFloat;
-			float randomFloat2 = MBRandom.RandomFloat;
-			float num2 = randomFloat * randomFloat2 * (float)num;
-			num2 = ((num2 > 15f) ? 15f : num2);
-			num2 = ((num2 < 1f) ? 1f : num2);
-			num2 *= (dailyUpdate ? 0.1f : 1f);
-			return MBRandom.RoundRandomized(num2);
+			float troopMultipler = Settings.Settings.Instance.TroopMultiplier;
+			int minNumberOfTroops = Settings.Settings.Instance.MinNumberOfTroops;
+			int maxNumberOfTroops = Settings.Settings.Instance.MaxNumberOfTroops + 1; // if set at 15 will never get 15 need this + 1
+			float numOfMercs = MBRandom.RandomInt(minNumberOfTroops, maxNumberOfTroops);
+			numOfMercs *= troopMultipler;
+			InformationManager.DisplayMessage(new InformationMessage($"troop calc is {numOfMercs}"));
+			return MBRandom.RoundRandomized(numOfMercs);
 		}
 
 		private void UpdateCurrentMercenaryTroopAndCount(Town town, bool forceUpdate = false)
@@ -110,7 +108,7 @@ namespace MinorClanTroopRecruitment
 			int r = MBRandom.Random.Next(mc_merc_data.minorClanList.Count);
 			var basicTroopId = mc_merc_data.minorClanList[r].BasicTroop.StringId;
 			CharacterObject basicTroopObject = Game.Current.ObjectManager.GetObject<CharacterObject>(basicTroopId.ToString());
-			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject, false);
+			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject);
 			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(basicTroopObject, numbOfUnits);
 		}
 
