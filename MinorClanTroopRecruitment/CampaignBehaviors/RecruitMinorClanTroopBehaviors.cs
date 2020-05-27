@@ -85,6 +85,15 @@ namespace MinorClanTroopRecruitment
 			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(mc_merc_data.dictionaryOfMercAtTownData[PlayerEncounter.Settlement.Town].TroopType, -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), "spawnpoint_mercenary", true, relation, null, false, false, null, false, false, true);
 		}
 
+		private void CheckIfMinorClanMercenaryCharacterNeedsToRefresh(Settlement settlement, CharacterObject oldTroopType)
+		{
+			if (settlement.IsTown && settlement == Settlement.CurrentSettlement && PlayerEncounter.LocationEncounter != null && settlement.LocationComplex != null && (CampaignMission.Current == null || GameStateManager.Current.ActiveState != CampaignMission.Current.State))
+			{
+				Settlement.CurrentSettlement.LocationComplex.GetLocationWithId("tavern").RemoveAllCharacters((LocationCharacter x) => (x.Character.Occupation == oldTroopType.Occupation && x.Character.Name == oldTroopType.Name));
+				this.AddMinorClanMercenaryCharacterToTavern(settlement);
+			}
+		}
+
 		// Update minorMerc troops
 		private void DailyTickTown(Town town)
 		{
@@ -104,16 +113,24 @@ namespace MinorClanTroopRecruitment
 
 		private void UpdateCurrentMercenaryTroopAndCount(Town town)
 		{
+			CharacterObject oldTroopType = mc_merc_data.dictionaryOfMercAtTownData[town].TroopType;
 			List<Clan> possibleClans = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleClans;
 			int r = MBRandom.Random.Next(possibleClans.Count);
 			string basicTroopId = possibleClans[r].BasicTroop.StringId;
 			CharacterObject basicTroopObject = Game.Current.ObjectManager.GetObject<CharacterObject>(basicTroopId.ToString());
 			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject);
-			if (MBRandom.RandomFloat <= Settings.Settings.Instance.PossibilityOfNone)
+			if (MBRandom.RandomFloat > Settings.Settings.Instance.PossibilityOfSpawn)
 			{
 				numbOfUnits = 0;
 			}
 			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(basicTroopObject, numbOfUnits);
+
+			// Since we don't have access to MercenaryNUmberChangedInTown or MercenaryTroopChangedInTown
+			// need way to trigger spawn of hire guy in tavern when inside of town on a daily update
+			if(oldTroopType != null)
+			{
+				CheckIfMinorClanMercenaryCharacterNeedsToRefresh(town.Settlement, oldTroopType);
+			}
 		}
 
 		// start of the dialog and game Menu code flows

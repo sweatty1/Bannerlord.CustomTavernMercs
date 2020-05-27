@@ -30,9 +30,9 @@ namespace MinorClanTroopRecruitment.Settings
         [SettingPropertyGroup("General")]
         public float TroopMultiplier { get; set; } = 1f;
 
-        [SettingPropertyFloatingInteger("Chance For no clan Mercenaries", 0f, 1f, "#0%", Order = 6, RequireRestart = false, HintText = "Limits the chance for clan mercs for personal player experience.")]
+        [SettingPropertyFloatingInteger("Chance For Clan Mercenaries", 0f, 1f, "#0%", Order = 6, RequireRestart = false, HintText = "The chance for clan mercs for personal player experience.")]
         [SettingPropertyGroup("General")]
-        public float PossibilityOfNone { get; set; } = 0.00f;
+        public float PossibilityOfSpawn { get; set; } = 1.00f;
 
         //[SettingPropertyInteger("Avaiable Range of Troops Multiplier", 1, 10, "0", Order = 5, RequireRestart = false, HintText = "Multiplies the base min/max number of possible recruits.")]
         //[SettingPropertyGroup("General")]
