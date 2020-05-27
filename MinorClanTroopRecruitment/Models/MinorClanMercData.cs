@@ -1,12 +1,18 @@
-﻿using TaleWorlds.CampaignSystem;
+﻿using System.Collections.Generic;
+using TaleWorlds.CampaignSystem;
 
 namespace MinorClanTroopRecruitment
 {
     public class MinorClanMercData
     {
-		public CharacterObject TroopType { get; private set; }
+		public MinorClanMercData(List<Clan> possibleClans)
+		{
+			PossibleClans = possibleClans;
+		}
 
+		public CharacterObject TroopType { get; private set; }
 		public int Number { get; private set; }
+		public List<Clan> PossibleClans { get; private set; }
 
 		public void ChangeMercenaryType(CharacterObject troopType, int number)
 		{
