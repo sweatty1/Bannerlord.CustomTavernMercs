@@ -31,6 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MCMv3, Version=3.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bannerlord.MCM.Integrated.3.1.4\lib\net472\MCMv3.dll</HintPath>
+    </Reference>
+    <Reference Include="MCMv3.Implementation.v3.1.4, Version=3.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bannerlord.MCM.Integrated.3.1.4\lib\net472\MCMv3.Implementation.v3.1.4.dll</HintPath>
+    </Reference>
+    <Reference Include="MCMv3.UI.v3.1.4, Version=3.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bannerlord.MCM.Integrated.3.1.4\lib\net472\MCMv3.UI.v3.1.4.dll</HintPath>
+    </Reference>
     <Reference Include="StoryMode">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\StoryMode\bin\Win64_Shipping_Client\StoryMode.dll</HintPath>
     </Reference>
@@ -63,15 +72,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EnchanceBaseMercRecruitment.cs" />
-    <Compile Include="MinorClanMercData.cs" />
-    <Compile Include="MinorClanMercDataHolder.cs" />
+    <Compile Include="CampaignBehaviors\EnchanceBaseMercRecruitment.cs" />
+    <Compile Include="Models\MinorClanMercData.cs" />
+    <Compile Include="Models\MinorClanMercDataHolder.cs" />
     <Compile Include="MinorClanTroopRecruitmentSubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecruitMinorClanTroopBehaviors.cs" />
+    <Compile Include="CampaignBehaviors\RecruitMinorClanTroopBehaviors.cs" />
+    <Compile Include="Settings\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SubModuleXML\SubModule.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ModuleData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
