@@ -1,7 +1,7 @@
 ﻿<Module>
 	<Name value="Minor Clan Troop Recruitment"/>
 	<Id value="MinorClanTroopRecruitment"/>
-	<Version value="v1.0.4"/>
+	<Version value="v1.0.5"/>
 	<SingleplayerModule value="true"/>
 	<MultiplayerModule value="false"/>
 	<DependedModules>

@@ -10,7 +10,7 @@ namespace MinorClanTroopRecruitment.Settings
         public override string Id => "MinorClanTroopRecruitment";
         public override string DisplayName => "Minor Clan Troop Recruitment"; //{typeof(MCMUISettings).Assembly.GetName().Version.ToString(3)}";
 
-        [SettingPropertyDropdown("Mercenary Spawn Towns", Order = 1, RequireRestart = true, HintText = "Restrict the towns that Minor Clans mercenaries can spawn in. Requires a Reload to take affect.")]
+        [SettingPropertyDropdown("Mercenary Spawn Towns", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Restrict the towns that Minor Clans mercenaries can spawn in.")]
         [SettingPropertyGroup("General")]
         public DefaultDropdown<string> RecruitmentSettings { get; set; } = new DefaultDropdown<string>(new string[] { "Any Culture", "Same Culture Only" }, 0); // "Regional", "Custom" future option ids for xml inputs
 
@@ -26,11 +26,11 @@ namespace MinorClanTroopRecruitment.Settings
         [SettingPropertyGroup("General")]
         public int MaxNumberOfTroops { get; set; } = 15;
 
-        [SettingPropertyFloatingInteger("Troops Multiplier", 1f, 4f, "0.00", Order = 5, RequireRestart = false, HintText = "When troops for a town are calculated multiplies the result by this amount.")]
+        [SettingPropertyFloatingInteger("Troop Multiplier", 1f, 4f, "0.00", Order = 5, RequireRestart = false, HintText = "Multiplies the number of troops calculated by the min/max by this amount. (number of Troops random between min/max * this number)")]
         [SettingPropertyGroup("General")]
         public float TroopMultiplier { get; set; } = 1f;
 
-        [SettingPropertyFloatingInteger("Chance For Clan Mercenaries", 0f, 1f, "#0%", Order = 6, RequireRestart = false, HintText = "The chance for clan mercs for personal player experience.")]
+        [SettingPropertyFloatingInteger("Chance For Clan Mercenaries", 0f, 1f, "#0%", Order = 6, RequireRestart = false, HintText = "Percent chance for minor clan mercenaries to spawn.")]
         [SettingPropertyGroup("General")]
         public float PossibilityOfSpawn { get; set; } = 1.00f;
 
