@@ -50,17 +50,14 @@ namespace MinorClanTroopRecruitment
             {
                 return town.Culture == clan.Culture;
             } else {
-                // leaders of unique culture clans do not have unique cultures but cultures of parent cultures
-                // At least this for now
-                return clan.Leader.Culture == town.Culture;
                 // More complicated way to apply unique culture clans
-                //if (clan.Culture.GetCultureCode() == CultureCode.Darshi && town.Culture.GetCultureCode() == CultureCode.Aserai)
-                //    return true;
-                //else if (clan.Culture.GetCultureCode() == CultureCode.Nord && town.Culture.GetCultureCode() == CultureCode.Sturgia)
-                //    return true;
-                //else if (clan.Culture.GetCultureCode() == CultureCode.Vakken && town.Culture.GetCultureCode() == CultureCode.Sturgia)
-                //    return true;
-                //return false;
+                if (clan.Culture.GetCultureCode() == CultureCode.Darshi && town.Culture.GetCultureCode() == CultureCode.Aserai)
+                    return true;
+                else if (clan.Culture.GetCultureCode() == CultureCode.Nord && town.Culture.GetCultureCode() == CultureCode.Sturgia)
+                    return true;
+                else if (clan.Culture.GetCultureCode() == CultureCode.Vakken && town.Culture.GetCultureCode() == CultureCode.Sturgia)
+                    return true;
+                return false; 
             }
         }
     }
