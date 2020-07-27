@@ -1,0 +1,22 @@
+[
+    {
+        "TroopCharacterId" : "ghilman_tier_1",
+        "Towns" : ["Diathma"],
+        "Cultures" : ["aserai", "vlandia"],
+        "Global" : true,
+        "CustomCost" : true,
+        "Cost" : 50
+    },
+    {
+        "TroopCharacterId" : "brotherhood_of_woods_tier_1",
+        "Towns" : ["Husn Fulq", "Tyal"],
+        "Cultures" : ["empire"],
+        "CustomCost" : false,
+        "Cost" : 75
+    },
+    {
+        "TroopCharacterId" : "imperial_archer",
+        "Towns" : ["Husn Fulq", "Tyal"],
+        "Cultures" : ["empire", "battania", "sturgia"]
+    }
+]

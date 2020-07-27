@@ -116,10 +116,13 @@ namespace MinorClanTroopRecruitment
 		private void UpdateCurrentMercenaryTroopAndCount(Town town)
 		{
 			CharacterObject oldTroopType = mc_merc_data.dictionaryOfMercAtTownData[town].TroopType;
-			List<Clan> possibleClans = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleClans;
-			int r = MBRandom.Random.Next(possibleClans.Count);
-			string basicTroopId = possibleClans[r].BasicTroop.StringId;
-			CharacterObject basicTroopObject = Game.Current.ObjectManager.GetObject<CharacterObject>(basicTroopId.ToString());
+			List<CharacterObject> possibleMercTroopsTypes = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleMercTroopsTypes;
+			if (possibleMercTroopsTypes.Count == 0)
+			{
+				return;
+			}
+			int r = MBRandom.Random.Next(possibleMercTroopsTypes.Count);
+			CharacterObject basicTroopObject = possibleMercTroopsTypes[r];
 			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject);
 			if (MBRandom.RandomFloat > Settings.Settings.Instance.PossibilityOfSpawn)
 			{
@@ -147,10 +150,10 @@ namespace MinorClanTroopRecruitment
 			return mc_merc_data.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
 		}
 
-		private int troopRecruitmentCost(CharacterObject troopType)
+		private int troopRecruitmentCost(MinorClanMercData mercData)
 		{
 			float recruitCostMultiplier = Settings.Settings.Instance.RecruitCostMultiplier;
-			int baseCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(troopType, Hero.MainHero, false);
+			int baseCost = mercData.GetRecruitmentCost();
 			return MBRandom.RoundRandomized(baseCost * recruitCostMultiplier);
 		}
 
@@ -193,7 +196,7 @@ namespace MinorClanTroopRecruitment
 			bool flag = minorMercData.Number > 1 && minorClanMercGuardIsInTavern(minorMercData);
 			if (flag)
 			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 				MBTextManager.SetTextVariable("PLURAL", (minorMercData.Number > 1) ? 1 : 0, false);
 				MBTextManager.SetTextVariable("MERCENARY_COUNT", minorMercData.Number - 1, false);
 				MBTextManager.SetTextVariable("GOLD_AMOUNT", troopRecruitmentCost * minorMercData.Number, false);
@@ -211,7 +214,7 @@ namespace MinorClanTroopRecruitment
 			bool flag = minorMercData.Number == 1 && minorClanMercGuardIsInTavern(minorMercData);
 			if (flag)
 			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 				MBTextManager.SetTextVariable("GOLD_AMOUNT", minorMercData.Number * troopRecruitmentCost, false);
 			}
 			return flag;
@@ -231,7 +234,7 @@ namespace MinorClanTroopRecruitment
 		private bool conversation_minor_clan_mercenary_recruit_accept_all_on_condition()
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			MBTextManager.SetTextVariable("PLURAL", (minorMercData.Number > 1) ? 1 : 0, false);
 			return Hero.MainHero.Gold >= minorMercData.Number * troopRecruitmentCost && numOfTroopSlotsOpen >= minorMercData.Number;
@@ -240,7 +243,7 @@ namespace MinorClanTroopRecruitment
 		private bool conversation_minor_clan_mercenary_recruit_accept_all_on_condition_past_limit()
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			int numOfTroopPlayerCanBuy = Hero.MainHero.Gold / troopRecruitmentCost;
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			MBTextManager.SetTextVariable("PLURAL", (minorMercData.Number > 1) ? 1 : 0, false);
@@ -255,7 +258,7 @@ namespace MinorClanTroopRecruitment
 		private bool conversation_minor_clan_mercenary_recruit_accept_some_on_condition()
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			if (Hero.MainHero.Gold >= troopRecruitmentCost && numOfTroopSlotsOpen > 0 && (Hero.MainHero.Gold < minorMercData.Number * troopRecruitmentCost || numOfTroopSlotsOpen < minorMercData.Number))
 			{
@@ -274,7 +277,7 @@ namespace MinorClanTroopRecruitment
 		private void conversation_minor_clan_mercenary_recruit_accept_some_on_consequence()
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			int numberToHire = 0;
 			while (Hero.MainHero.Gold > troopRecruitmentCost * (numberToHire + 1) && numOfTroopSlotsOpen > numberToHire)
@@ -287,7 +290,7 @@ namespace MinorClanTroopRecruitment
 		private bool conversation_minor_clan_mercenary_recruit_accept_some_on_condition_past_limit_afford()
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			if (Hero.MainHero.Gold >= troopRecruitmentCost && Hero.MainHero.Gold < minorMercData.Number * troopRecruitmentCost)
 			{
@@ -310,7 +313,7 @@ namespace MinorClanTroopRecruitment
 		private void conversation_minor_clan_mercenary_recruit_accept_some_past_limit_on_consequence()
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			int numberToHire = 0;
 			while (Hero.MainHero.Gold > troopRecruitmentCost * (numberToHire + 1) && minorMercData.Number > numberToHire)
 			{
@@ -323,7 +326,7 @@ namespace MinorClanTroopRecruitment
 		{
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
 			minorMercData.ChangeMercenaryCount(-numberOfMercsToHire);
-			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 			MobileParty.MainParty.AddElementToMemberRoster(minorMercData.TroopType, numberOfMercsToHire, false);
 			int amount = numberOfMercsToHire * troopRecruitmentCost;
 			GiveGoldAction.ApplyBetweenCharacters(Hero.MainHero, null, amount, false);
@@ -333,14 +336,14 @@ namespace MinorClanTroopRecruitment
 		// Conditions to trigger reject hiring options
 		private bool conversation_minor_clan_mercenary_recruit_reject_gold_or_party_size_on_condition()
 		{
-			int troopRecruitmentCost = this.troopRecruitmentCost(getMinorMercDataOfPlayerEncounter().TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(getMinorMercDataOfPlayerEncounter());
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			return Hero.MainHero.Gold < troopRecruitmentCost || numOfTroopSlotsOpen <= 0;
 		}
 
 		private bool conversation_minor_clan_mercenary_recruit_dont_need_men_on_condition()
 		{
-			int troopRecruitmentCost = this.troopRecruitmentCost(getMinorMercDataOfPlayerEncounter().TroopType);
+			int troopRecruitmentCost = this.troopRecruitmentCost(getMinorMercDataOfPlayerEncounter());
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			return Hero.MainHero.Gold >= troopRecruitmentCost && numOfTroopSlotsOpen > 0;
 		}
@@ -373,7 +376,7 @@ namespace MinorClanTroopRecruitment
 			MinorClanMercData minorMercData = mc_merc_data.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
 			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && minorMercData != null && minorMercData.Number > 0)
 			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 				if (Hero.MainHero.Gold >= troopRecruitmentCost)
 				{
 					int num = Math.Min(minorMercData.Number, Hero.MainHero.Gold / troopRecruitmentCost);
@@ -387,11 +390,11 @@ namespace MinorClanTroopRecruitment
 			return false;
 		}
 
-		private static void BuyMinorClanMercenariesViaGameMenu(MinorClanMercData minorMercData)
+		private void BuyMinorClanMercenariesViaGameMenu(MinorClanMercData minorMercData)
 		{
 			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && minorMercData != null && minorMercData.Number > 0)
 			{
-				int troopRecruitmentCost = MBRandom.RoundRandomized(Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, null, false) * Settings.Settings.Instance.RecruitCostMultiplier);
+				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 				if (Hero.MainHero.Gold >= troopRecruitmentCost)
 				{
 					int numOfMercs = Math.Min(minorMercData.Number, Hero.MainHero.Gold / troopRecruitmentCost);
@@ -407,7 +410,7 @@ namespace MinorClanTroopRecruitment
 			MinorClanMercData minorMercData = mc_merc_data.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
 			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && minorMercData != null && minorMercData.Number > 0)
 			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData.TroopType);
+				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 				int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 				int numOfTroopPlayerCanBuy = Hero.MainHero.Gold / troopRecruitmentCost;
 				if (numOfTroopSlotsOpen > 0 && Hero.MainHero.Gold >= troopRecruitmentCost && numOfTroopSlotsOpen < minorMercData.Number && numOfTroopSlotsOpen < numOfTroopPlayerCanBuy)
@@ -424,12 +427,12 @@ namespace MinorClanTroopRecruitment
 			return false;
 		}
 
-		private static void BuyMinorClanMercenariesViaGameMenuToPartyLimit(MinorClanMercData minorMercData)
+		private void BuyMinorClanMercenariesViaGameMenuToPartyLimit(MinorClanMercData minorMercData)
 		{
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && minorMercData != null && minorMercData.Number > 0 && numOfTroopSlotsOpen > 0)
 			{
-				int troopRecruitmentCost = MBRandom.RoundRandomized(Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(minorMercData.TroopType, null, false) * Settings.Settings.Instance.RecruitCostMultiplier);
+				int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
 				if (Hero.MainHero.Gold >= troopRecruitmentCost)
 				{
 					int numOfMercs = Math.Min(minorMercData.Number, Hero.MainHero.Gold / troopRecruitmentCost);

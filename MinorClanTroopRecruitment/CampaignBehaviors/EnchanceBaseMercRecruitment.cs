@@ -115,7 +115,7 @@ namespace MinorClanTroopRecruitment
 			return false;
 		}
 
-		private static void BuyRegMercenariesViaGameMenuToPartyLimit()
+		private void BuyRegMercenariesViaGameMenuToPartyLimit()
 		{
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData != null && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number > 0 && numOfTroopSlotsOpen > 0)

@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 
@@ -7,15 +11,22 @@ namespace MinorClanTroopRecruitment
     public class MinorClanMercDataHolder
     {
         public Dictionary<Town, MinorClanMercData> dictionaryOfMercAtTownData;
+        
         public MinorClanMercDataHolder()
         {
-            Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
-            foreach (Town town in Town.AllTowns)
-            {   
-                var possibleClans = possibleTownClans(town);
-                dictionarySetUp.Add(town, new MinorClanMercData(possibleClans));
+            if (Settings.Settings.Instance.RecruitmentSettings.SelectedValue == "Custom")
+            {
+                dictionaryOfMercAtTownData = CustomBuilder();
+            } else
+            {
+                Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
+                foreach (Town town in Town.AllTowns)
+                {
+                    List<CharacterObject> possibleClanTroops = possibleTownClans(town).Select(clan => clan.BasicTroop).ToList();
+                    dictionarySetUp.Add(town, new MinorClanMercData(possibleClanTroops));
+                }
+                dictionaryOfMercAtTownData = dictionarySetUp;
             }
-            dictionaryOfMercAtTownData = dictionarySetUp;
         }
 
         private List<Clan> possibleTownClans(Town town)
@@ -58,6 +69,59 @@ namespace MinorClanTroopRecruitment
                 else if (clan.Culture.GetCultureCode() == CultureCode.Vakken && town.Culture.GetCultureCode() == CultureCode.Sturgia)
                     return true;
                 return false; 
+            }
+        }
+
+        private Dictionary<Town, MinorClanMercData> CustomBuilder()
+        {
+            string executeDirectoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string pathToJson = Path.GetFullPath(Path.Combine(executeDirectoryPath, @"..\..\ModuleData\Custom.json"));
+
+            // set up the dictionary for custom
+            Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
+            foreach (Town town in Town.AllTowns)
+            {
+                dictionarySetUp.Add(town, new MinorClanMercData(new List<CharacterObject>()));
+            }
+
+
+            if (File.Exists(pathToJson))
+            {
+                List<CustomMercData> deserializedCustomListUnitInfo;
+                string customJson = File.ReadAllText(pathToJson);
+                deserializedCustomListUnitInfo = JsonConvert.DeserializeObject<List<CustomMercData>>(customJson);
+                IEnumerable<Town> towns;
+                foreach (CustomMercData mercData in deserializedCustomListUnitInfo)
+                {
+                    CharacterObject troopType = CharacterObject.Find(mercData.TroopCharacterId.ToLower());
+                    if (troopType == null)
+                    {
+                        // Throw Error
+                    }
+                    if (mercData.CustomCost)
+                    {
+                        //mercData.Cost;
+                    }
+                    if (mercData.Global)
+                    {
+                        towns = Town.AllTowns;
+                    } else
+                    {
+                        IEnumerable<Town> cultureTowns = Town.AllTowns.Where(town => mercData.Cultures.Any(culture => culture.ToLower() == town.Culture.GetName().ToString().ToLower()));
+                        IEnumerable<Town> townTowns = Town.AllTowns.Where(town => mercData.Towns.Any(tNames => tNames.ToLower() == town.Name.ToString().ToLower()));
+                        towns = cultureTowns.Concat(townTowns).Distinct();
+                    }
+                    foreach(Town town in towns)
+                    {
+                        dictionarySetUp[town].PossibleMercTroopsTypes.Add(troopType);
+                    }
+                }
+                return dictionarySetUp;
+            }
+            else
+            {
+                InformationManager.DisplayMessage(new InformationMessage("Custom.json not found"));
+                return dictionarySetUp;
             }
         }
     }
