@@ -72,6 +72,7 @@ namespace MinorClanTroopRecruitment
 
 			if (settlement.LocationComplex != null && settlement.IsTown && mc_merc_data.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
 			{
+				
 				Location locationWithId = Settlement.CurrentSettlement.LocationComplex.GetLocationWithId("tavern");
 				if (locationWithId != null)
 				{
@@ -82,7 +83,8 @@ namespace MinorClanTroopRecruitment
 
 		private LocationCharacter CreateMinorClanMercenary(CultureObject culture, LocationCharacter.CharacterRelations relation)
 		{
-			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(mc_merc_data.dictionaryOfMercAtTownData[PlayerEncounter.Settlement.Town].TroopType, -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), "spawnpoint_mercenary", true, relation, null, false, false, null, false, false, true);
+			Settlement currentSettlement = MobileParty.MainParty.CurrentSettlement;
+			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(mc_merc_data.dictionaryOfMercAtTownData[currentSettlement.Town].TroopType, -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), "spawnpoint_mercenary", true, relation, null, false, false, null, false, false, true);
 		}
 
 		private void CheckIfMinorClanMercenaryCharacterNeedsToRefresh(Settlement settlement, CharacterObject oldTroopType)
@@ -142,7 +144,7 @@ namespace MinorClanTroopRecruitment
 
 		private MinorClanMercData getMinorMercDataOfPlayerEncounter()
 		{
-			return mc_merc_data.dictionaryOfMercAtTownData[PlayerEncounter.Settlement.Town];
+			return mc_merc_data.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
 		}
 
 		private int troopRecruitmentCost(CharacterObject troopType)
@@ -183,7 +185,7 @@ namespace MinorClanTroopRecruitment
 		// Conditions for starting line dialog
 		private bool conversation_minor_clan_mercenary_recruit_plural_start_on_condition()
 		{
-			if(PlayerEncounter.Settlement == null || !PlayerEncounter.Settlement.IsTown)
+			if(MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown)
 			{
 				return false;
 			}
@@ -201,7 +203,7 @@ namespace MinorClanTroopRecruitment
 
 		private bool conversation_minor_clan_mercenary_recruit_single_start_on_condition()
 		{
-			if (PlayerEncounter.Settlement == null || !PlayerEncounter.Settlement.IsTown)
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown)
 			{
 				return false;
 			}
@@ -217,7 +219,7 @@ namespace MinorClanTroopRecruitment
 
 		private bool conversation_minor_clan_mercenary_recruited_on_condition()
 		{
-			if (PlayerEncounter.Settlement == null || !PlayerEncounter.Settlement.IsTown)
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown)
 			{
 				return false;
 			}
