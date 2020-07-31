@@ -5,43 +5,54 @@ namespace MinorClanTroopRecruitment
 {
     public class MinorClanMercData
     {
-		public MinorClanMercData(List<CharacterObject> possibleMercTroopsTypes)
+		//public MinorClanMercData(List<CharacterObject> possibleMercTroopsTypes)
+		public MinorClanMercData(List<TroopInfoStruct> possibleMercTroopsTypes)
 		{
-			PossibleMercTroopsTypes = possibleMercTroopsTypes;
+			//PossibleMercTroopsTypes = possibleMercTroopsTypes;
+			PossibleMercTroopInfo = possibleMercTroopsTypes;
 		}
 
-		public CharacterObject TroopType { get; private set; }
+		//public CharacterObject TroopType { get; private set; }
+		//public int Number { get; private set; }
+
+		//public bool HasCustomCost { get; private set; } = false;
+		//public int CustomCost { get; private set; }
+		//public List<CharacterObject> PossibleMercTroopsTypes { get; private set; }
+
+		public TroopInfoStruct TroopInfo { get; private set; }
 		public int Number { get; private set; }
 
-		public bool HasCustomCost { get; private set; } = false;
-		public int CustomCost { get; private set; }
-		public List<CharacterObject> PossibleMercTroopsTypes { get; private set; }
+		public List<TroopInfoStruct> PossibleMercTroopInfo { get; private set; }
+
+		public CharacterObject TroopInfoCharObject()
+		{
+			return TroopInfo.TroopCharacterObject;
+		}
 
 		public int GetRecruitmentCost()
 		{
-			if (HasCustomCost)
+			if (TroopInfo.HasCustomCost)
 			{
-				return CustomCost;
+				return TroopInfo.CustomCost;
 			}
 			else
 			{
-				return Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(TroopType, Hero.MainHero, false);
+				return Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(TroopInfoCharObject(), Hero.MainHero, false);
 			}
 		}
 
-		public void ChangeMercenaryType(CharacterObject troopType, int number)
+		public void ChangeMercenaryType(TroopInfoStruct newTroopStruct, int number)
 		{
-			if (troopType != this.TroopType)
+			if (newTroopStruct != TroopInfo)
 			{
-				CharacterObject troopType2 = this.TroopType;
-				this.TroopType = troopType;
-				this.Number = number;
+				TroopInfo = newTroopStruct;
+				Number = number;
 				return;
 			}
-			if (this.Number != number)
+			if (Number != number)
 			{
-				int difference = number - this.Number;
-				this.ChangeMercenaryCount(difference);
+				int difference = number - Number;
+				ChangeMercenaryCount(difference);
 			}
 		}
 
@@ -49,14 +60,36 @@ namespace MinorClanTroopRecruitment
 		{
 			if (difference != 0)
 			{
-				int number = this.Number;
-				this.Number += difference;
+				Number += difference;
 			}
 		}
 
 		public bool HasAvailableMercenary(Occupation occupation = Occupation.NotAssigned)
 		{
-			return this.TroopType != null && this.Number > 0 && (occupation == Occupation.NotAssigned || this.TroopType.Occupation == occupation);
+			return TroopInfo != null && TroopInfoCharObject() != null && Number > 0 && (occupation == Occupation.NotAssigned || TroopInfoCharObject().Occupation == occupation);
+		}
+	}
+
+	public struct TroopInfoStruct
+	{
+		public CharacterObject TroopCharacterObject;
+		public bool HasCustomCost;
+		public int CustomCost;
+
+		public TroopInfoStruct(CharacterObject characterObject, bool hasCustomCost, int customCost)
+		{
+			TroopCharacterObject = characterObject;
+			HasCustomCost = hasCustomCost;
+			CustomCost = customCost;
+		}
+
+		public static bool operator ==(TroopInfoStruct troop1, TroopInfoStruct troop2)
+		{
+			return troop1.Equals(troop2);
+		}
+		public static bool operator !=(TroopInfoStruct troop1, TroopInfoStruct troop2)
+		{
+			return !troop1.Equals(troop2);
 		}
 	}
 }

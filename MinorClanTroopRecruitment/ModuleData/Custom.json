@@ -8,7 +8,7 @@
         "Cost" : 50
     },
     {
-        "TroopCharacterId" : "brotherhood_of_woods_tier_1",
+        "TroopCharacterId" : "brotherhood_OF_woods_tier_1",
         "Towns" : ["Husn Fulq", "Tyal"],
         "Cultures" : ["empire"],
         "CustomCost" : false,

@@ -84,7 +84,7 @@ namespace MinorClanTroopRecruitment
 		private LocationCharacter CreateMinorClanMercenary(CultureObject culture, LocationCharacter.CharacterRelations relation)
 		{
 			Settlement currentSettlement = MobileParty.MainParty.CurrentSettlement;
-			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(mc_merc_data.dictionaryOfMercAtTownData[currentSettlement.Town].TroopType, -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), "spawnpoint_mercenary", true, relation, null, false, false, null, false, false, true);
+			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(mc_merc_data.dictionaryOfMercAtTownData[currentSettlement.Town].TroopInfoCharObject(), -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), "spawnpoint_mercenary", true, relation, null, false, false, null, false, false, true);
 		}
 
 		private void CheckIfMinorClanMercenaryCharacterNeedsToRefresh(Settlement settlement, CharacterObject oldTroopType)
@@ -103,7 +103,7 @@ namespace MinorClanTroopRecruitment
 		}
 		
 
-		private static int FindNumberOfMercenariesWillBeAdded(BasicCharacterObject character)
+		private static int FindNumberOfMercenariesWillBeAdded()
 		{
 			float troopMultipler = Settings.Settings.Instance.TroopMultiplier;
 			int minNumberOfTroops = Settings.Settings.Instance.MinNumberOfTroops;
@@ -115,20 +115,20 @@ namespace MinorClanTroopRecruitment
 
 		private void UpdateCurrentMercenaryTroopAndCount(Town town)
 		{
-			CharacterObject oldTroopType = mc_merc_data.dictionaryOfMercAtTownData[town].TroopType;
-			List<CharacterObject> possibleMercTroopsTypes = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleMercTroopsTypes;
-			if (possibleMercTroopsTypes.Count == 0)
+			CharacterObject oldTroopType = mc_merc_data.dictionaryOfMercAtTownData[town].TroopInfoCharObject();
+			List<TroopInfoStruct> possibleMercTroops = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleMercTroopInfo;
+			if (possibleMercTroops.Count == 0)
 			{
 				return;
 			}
-			int r = MBRandom.Random.Next(possibleMercTroopsTypes.Count);
-			CharacterObject basicTroopObject = possibleMercTroopsTypes[r];
-			int numbOfUnits = FindNumberOfMercenariesWillBeAdded(basicTroopObject);
+			int r = MBRandom.Random.Next(possibleMercTroops.Count);
+			TroopInfoStruct newTroopStruct = possibleMercTroops[r];
+			int numbOfUnits = FindNumberOfMercenariesWillBeAdded();
 			if (MBRandom.RandomFloat > Settings.Settings.Instance.PossibilityOfSpawn)
 			{
 				numbOfUnits = 0;
 			}
-			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(basicTroopObject, numbOfUnits);
+			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(newTroopStruct, numbOfUnits);
 
 			// Since we don't have access to MercenaryNUmberChangedInTown or MercenaryTroopChangedInTown
 			// need way to trigger spawn of hire guy in tavern when inside of town on a daily update
@@ -178,11 +178,11 @@ namespace MinorClanTroopRecruitment
 
 		private bool minorClanMercGuardIsInTavern(MinorClanMercData minorMercData)
 		{
-			if (CampaignMission.Current == null || CampaignMission.Current.Location == null || minorMercData.TroopType == null)
+			if (CampaignMission.Current == null || CampaignMission.Current.Location == null || minorMercData.TroopInfo == null || minorMercData.TroopInfoCharObject() == null)
 			{
 				return false;
 			}
-			return CampaignMission.Current.Location.StringId == "tavern" && minorMercData.TroopType.Name == CharacterObject.OneToOneConversationCharacter.Name && CharacterObject.OneToOneConversationCharacter.IsSoldier;
+			return CampaignMission.Current.Location.StringId == "tavern" && minorMercData.TroopInfoCharObject().Name == CharacterObject.OneToOneConversationCharacter.Name && CharacterObject.OneToOneConversationCharacter.IsSoldier;
 		}
 
 		// Conditions for starting line dialog
@@ -327,10 +327,10 @@ namespace MinorClanTroopRecruitment
 			MinorClanMercData minorMercData = getMinorMercDataOfPlayerEncounter();
 			minorMercData.ChangeMercenaryCount(-numberOfMercsToHire);
 			int troopRecruitmentCost = this.troopRecruitmentCost(minorMercData);
-			MobileParty.MainParty.AddElementToMemberRoster(minorMercData.TroopType, numberOfMercsToHire, false);
+			MobileParty.MainParty.AddElementToMemberRoster(minorMercData.TroopInfoCharObject(), numberOfMercsToHire, false);
 			int amount = numberOfMercsToHire * troopRecruitmentCost;
 			GiveGoldAction.ApplyBetweenCharacters(Hero.MainHero, null, amount, false);
-			CampaignEventDispatcher.Instance.OnUnitRecruited(minorMercData.TroopType, numberOfMercsToHire);
+			CampaignEventDispatcher.Instance.OnUnitRecruited(minorMercData.TroopInfoCharObject(), numberOfMercsToHire);
 		}
 
 		// Conditions to trigger reject hiring options
@@ -381,7 +381,7 @@ namespace MinorClanTroopRecruitment
 				{
 					int num = Math.Min(minorMercData.Number, Hero.MainHero.Gold / troopRecruitmentCost);
 					MBTextManager.SetTextVariable("MC_MEN_COUNT", num, false);
-					MBTextManager.SetTextVariable("MC_MERCENARY_NAME", minorMercData.TroopType.Name, false);
+					MBTextManager.SetTextVariable("MC_MERCENARY_NAME", minorMercData.TroopInfoCharObject().Name, false);
 					MBTextManager.SetTextVariable("MC_TOTAL_AMOUNT", num * troopRecruitmentCost, false);
 					args.optionLeaveType = GameMenuOption.LeaveType.RansomAndBribe;
 					return true;
@@ -398,7 +398,7 @@ namespace MinorClanTroopRecruitment
 				if (Hero.MainHero.Gold >= troopRecruitmentCost)
 				{
 					int numOfMercs = Math.Min(minorMercData.Number, Hero.MainHero.Gold / troopRecruitmentCost);
-					MobileParty.MainParty.MemberRoster.AddToCounts(minorMercData.TroopType, numOfMercs, false, 0, 0, true, -1);
+					MobileParty.MainParty.MemberRoster.AddToCounts(minorMercData.TroopInfoCharObject(), numOfMercs, false, 0, 0, true, -1);
 					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
 					minorMercData.ChangeMercenaryCount(-numOfMercs);
 					GameMenu.SwitchToMenu("town_backstreet");
@@ -418,7 +418,7 @@ namespace MinorClanTroopRecruitment
 					int numOfMercs = Math.Min(minorMercData.Number, numOfTroopPlayerCanBuy);
 					numOfMercs = Math.Min(numOfTroopSlotsOpen, numOfMercs);
 					MBTextManager.SetTextVariable("MC_MEN_COUNT_PL", numOfMercs, false);
-					MBTextManager.SetTextVariable("MC_MERCENARY_NAME_PL", minorMercData.TroopType.Name, false);
+					MBTextManager.SetTextVariable("MC_MERCENARY_NAME_PL", minorMercData.TroopInfoCharObject().Name, false);
 					MBTextManager.SetTextVariable("MC_TOTAL_AMOUNT_PL", numOfMercs * troopRecruitmentCost, false);
 					args.optionLeaveType = GameMenuOption.LeaveType.RansomAndBribe;
 					return true;
@@ -437,7 +437,7 @@ namespace MinorClanTroopRecruitment
 				{
 					int numOfMercs = Math.Min(minorMercData.Number, Hero.MainHero.Gold / troopRecruitmentCost);
 					numOfMercs = Math.Min(numOfTroopSlotsOpen, numOfMercs);
-					MobileParty.MainParty.MemberRoster.AddToCounts(minorMercData.TroopType, numOfMercs, false, 0, 0, true, -1);
+					MobileParty.MainParty.MemberRoster.AddToCounts(minorMercData.TroopInfoCharObject(), numOfMercs, false, 0, 0, true, -1);
 					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
 					minorMercData.ChangeMercenaryCount(-numOfMercs);
 					GameMenu.SwitchToMenu("town_backstreet");

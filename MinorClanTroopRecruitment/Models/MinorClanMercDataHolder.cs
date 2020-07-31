@@ -22,7 +22,7 @@ namespace MinorClanTroopRecruitment
                 Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
                 foreach (Town town in Town.AllTowns)
                 {
-                    List<CharacterObject> possibleClanTroops = possibleTownClans(town).Select(clan => clan.BasicTroop).ToList();
+                    List<TroopInfoStruct> possibleClanTroops = possibleTownClans(town).Select(clan => new TroopInfoStruct(clan.BasicTroop, false, 0)).ToList();
                     dictionarySetUp.Add(town, new MinorClanMercData(possibleClanTroops));
                 }
                 dictionaryOfMercAtTownData = dictionarySetUp;
@@ -81,9 +81,8 @@ namespace MinorClanTroopRecruitment
             Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
             foreach (Town town in Town.AllTowns)
             {
-                dictionarySetUp.Add(town, new MinorClanMercData(new List<CharacterObject>()));
+                dictionarySetUp.Add(town, new MinorClanMercData(new List<TroopInfoStruct>()));
             }
-
 
             if (File.Exists(pathToJson))
             {
@@ -98,22 +97,17 @@ namespace MinorClanTroopRecruitment
                     {
                         // Throw Error
                     }
-                    if (mercData.CustomCost)
-                    {
-                        //mercData.Cost;
-                    }
                     if (mercData.Global)
                     {
                         towns = Town.AllTowns;
-                    } else
-                    {
+                    } else {
                         IEnumerable<Town> cultureTowns = Town.AllTowns.Where(town => mercData.Cultures.Any(culture => culture.ToLower() == town.Culture.GetName().ToString().ToLower()));
                         IEnumerable<Town> townTowns = Town.AllTowns.Where(town => mercData.Towns.Any(tNames => tNames.ToLower() == town.Name.ToString().ToLower()));
                         towns = cultureTowns.Concat(townTowns).Distinct();
                     }
                     foreach(Town town in towns)
                     {
-                        dictionarySetUp[town].PossibleMercTroopsTypes.Add(troopType);
+                        dictionarySetUp[town].PossibleMercTroopInfo.Add(new TroopInfoStruct(troopType, mercData.CustomCost, mercData.Cost));
                     }
                 }
                 return dictionarySetUp;
