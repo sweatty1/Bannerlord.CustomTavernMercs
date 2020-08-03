@@ -1,0 +1,97 @@
+[
+  {
+    "TroopCharacterId": "legion_of_the_betrayed_tier_1",
+    "Global": false,
+    "Cultures": [ "empire" ]
+  },
+  {
+    "TroopCharacterId": "guardians_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "empire" ]
+  },
+  {
+    "TroopCharacterId": "embers_of_flame_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "empire" ]
+  },
+  {
+    "TroopCharacterId": "eleftheroi_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "empire" ]
+  },
+  {
+    "TroopCharacterId": "hidden_hand_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "empire" ]
+  },
+  {
+    "TroopCharacterId": "ghilman_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "aserai" ]
+  },
+  {
+    "TroopCharacterId": "jawwal_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "aserai" ]
+  },
+  {
+    "TroopCharacterId": "beni_zilal_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "aserai" ]
+  },
+  {
+    "TroopCharacterId": "skolderbrotva_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "sturgia" ]
+  },
+  {
+    "TroopCharacterId": "lakepike_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "sturgia" ]
+  },
+  {
+    "TroopCharacterId": "forest_people_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "sturgia", "empire", "vlandia", "battania" ]
+  },
+  {
+    "TroopCharacterId": "company_of_the_boar_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "vlandia" ]
+  },
+  {
+    "TroopCharacterId": "brotherhood_of_woods_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "vlandia" ]
+  },
+  {
+    "TroopCharacterId": "karakhuzaits_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "Khuzait" ]
+  },
+  {
+    "TroopCharacterId": "galloglass_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "battania" ]
+  },
+  {
+    "TroopCharacterId": "wolfskins_tier_1",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "battania" ]
+  }
+]

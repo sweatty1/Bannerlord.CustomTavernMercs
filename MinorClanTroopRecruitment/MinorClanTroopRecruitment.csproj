@@ -93,7 +93,10 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ModuleData\Custom.json" />
+    <None Include="ModuleData\Json Same Culture.json" />
+    <None Include="ModuleData\CustomC.json" />
+    <None Include="ModuleData\CustomB.json" />
+    <None Include="ModuleData\CustomA.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,0 +1,50 @@
+[
+  {
+    "TroopCharacterId": "imperial_vigla_recruit",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "empire" ],
+    "CustomCost": true,
+    "Cost": 5
+  },
+  {
+    "TroopCharacterId": "aserai_youth",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "aserai" ],
+    "CustomCost": true,
+    "Cost": 5
+  },
+  {
+    "TroopCharacterId": "sturgian_warrior_son",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "sturgia" ],
+    "CustomCost": true,
+    "Cost": 5
+  },
+  {
+    "TroopCharacterId": "vlandian_squire",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "vlandia" ],
+    "CustomCost": true,
+    "Cost": 5
+  },
+  {
+    "TroopCharacterId": "khuzait_noble_son",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "Khuzait" ],
+    "CustomCost": true,
+    "Cost": 5
+  },
+  {
+    "TroopCharacterId": "battanian_highborn_youth",
+    "Global": false,
+    "Towns": [],
+    "Cultures": [ "battania" ],
+    "CustomCost": true,
+    "Cost": 5
+  }
+]

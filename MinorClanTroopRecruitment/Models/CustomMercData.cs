@@ -13,9 +13,9 @@ namespace MinorClanTroopRecruitment
         public bool CustomCost { get; set; }
         public int Cost { get; set; }
         public bool Global { get; set; }
-        public List<string> Towns { get; set; }
-        public List<string> Cultures { get; set; }
+        public List<string> Towns { get; set; } = new List<string>();
+        public List<string> Cultures { get; set; } = new List<string>();
 
-        
+
     }
 }

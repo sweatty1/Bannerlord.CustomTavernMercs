@@ -5,19 +5,10 @@ namespace MinorClanTroopRecruitment
 {
     public class MinorClanMercData
     {
-		//public MinorClanMercData(List<CharacterObject> possibleMercTroopsTypes)
 		public MinorClanMercData(List<TroopInfoStruct> possibleMercTroopsTypes)
 		{
-			//PossibleMercTroopsTypes = possibleMercTroopsTypes;
 			PossibleMercTroopInfo = possibleMercTroopsTypes;
 		}
-
-		//public CharacterObject TroopType { get; private set; }
-		//public int Number { get; private set; }
-
-		//public bool HasCustomCost { get; private set; } = false;
-		//public int CustomCost { get; private set; }
-		//public List<CharacterObject> PossibleMercTroopsTypes { get; private set; }
 
 		public TroopInfoStruct TroopInfo { get; private set; }
 		public int Number { get; private set; }
