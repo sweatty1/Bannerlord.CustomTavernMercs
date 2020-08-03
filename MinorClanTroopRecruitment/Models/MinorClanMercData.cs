@@ -5,28 +5,45 @@ namespace MinorClanTroopRecruitment
 {
     public class MinorClanMercData
     {
-		public MinorClanMercData(List<Clan> possibleClans)
+		public MinorClanMercData(List<TroopInfoStruct> possibleMercTroopsTypes)
 		{
-			PossibleClans = possibleClans;
+			PossibleMercTroopInfo = possibleMercTroopsTypes;
 		}
 
-		public CharacterObject TroopType { get; private set; }
+		public TroopInfoStruct TroopInfo { get; private set; }
 		public int Number { get; private set; }
-		public List<Clan> PossibleClans { get; private set; }
 
-		public void ChangeMercenaryType(CharacterObject troopType, int number)
+		public List<TroopInfoStruct> PossibleMercTroopInfo { get; private set; }
+
+		public CharacterObject TroopInfoCharObject()
 		{
-			if (troopType != this.TroopType)
+			return TroopInfo.TroopCharacterObject;
+		}
+
+		public int GetRecruitmentCost()
+		{
+			if (TroopInfo.HasCustomCost)
 			{
-				CharacterObject troopType2 = this.TroopType;
-				this.TroopType = troopType;
-				this.Number = number;
+				return TroopInfo.CustomCost;
+			}
+			else
+			{
+				return Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(TroopInfoCharObject(), Hero.MainHero, false);
+			}
+		}
+
+		public void ChangeMercenaryType(TroopInfoStruct newTroopStruct, int number)
+		{
+			if (newTroopStruct != TroopInfo)
+			{
+				TroopInfo = newTroopStruct;
+				Number = number;
 				return;
 			}
-			if (this.Number != number)
+			if (Number != number)
 			{
-				int difference = number - this.Number;
-				this.ChangeMercenaryCount(difference);
+				int difference = number - Number;
+				ChangeMercenaryCount(difference);
 			}
 		}
 
@@ -34,14 +51,36 @@ namespace MinorClanTroopRecruitment
 		{
 			if (difference != 0)
 			{
-				int number = this.Number;
-				this.Number += difference;
+				Number += difference;
 			}
 		}
 
 		public bool HasAvailableMercenary(Occupation occupation = Occupation.NotAssigned)
 		{
-			return this.TroopType != null && this.Number > 0 && (occupation == Occupation.NotAssigned || this.TroopType.Occupation == occupation);
+			return TroopInfo != null && TroopInfoCharObject() != null && Number > 0 && (occupation == Occupation.NotAssigned || TroopInfoCharObject().Occupation == occupation);
+		}
+	}
+
+	public struct TroopInfoStruct
+	{
+		public CharacterObject TroopCharacterObject;
+		public bool HasCustomCost;
+		public int CustomCost;
+
+		public TroopInfoStruct(CharacterObject characterObject, bool hasCustomCost, int customCost)
+		{
+			TroopCharacterObject = characterObject;
+			HasCustomCost = hasCustomCost;
+			CustomCost = customCost;
+		}
+
+		public static bool operator ==(TroopInfoStruct troop1, TroopInfoStruct troop2)
+		{
+			return troop1.Equals(troop2);
+		}
+		public static bool operator !=(TroopInfoStruct troop1, TroopInfoStruct troop2)
+		{
+			return !troop1.Equals(troop2);
 		}
 	}
 }

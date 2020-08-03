@@ -10,9 +10,9 @@ namespace MinorClanTroopRecruitment.Settings
         public override string Id => "MinorClanTroopRecruitment";
         public override string DisplayName => "Minor Clan Troop Recruitment"; //{typeof(MCMUISettings).Assembly.GetName().Version.ToString(3)}";
 
-        [SettingPropertyDropdown("Mercenary Spawn Towns", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Restrict the towns that Minor Clans mercenaries can spawn in.")]
+        [SettingPropertyDropdown("Mercenary Spawn Towns", Order = 1, RequireRestart = false, HintText = "Requires a Reload to take affect if in game. Restrict the towns that Minor Clans mercenaries can spawn in.")]
         [SettingPropertyGroup("General")]
-        public DefaultDropdown<string> RecruitmentSettings { get; set; } = new DefaultDropdown<string>(new string[] { "Any Culture", "Same Culture Only" }, 0); // "Regional", "Custom" future option ids for xml inputs
+        public DefaultDropdown<string> RecruitmentSettings { get; set; } = new DefaultDropdown<string>(new string[] { "Any Culture", "Same Culture Only", "Json Same Culture", "CustomA", "CustomB", "CustomC" }, 0);
 
         [SettingPropertyFloatingInteger("Recruit Cost Multiplier", 1f, 4f, "0.00", Order = 2, RequireRestart = false, HintText = "Increase the recruitment cost by this many time more than their base recruitment Cost. (base troop cost * this number)")]
         [SettingPropertyGroup("General")]
