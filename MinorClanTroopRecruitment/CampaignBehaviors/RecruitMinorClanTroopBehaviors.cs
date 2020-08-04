@@ -18,10 +18,17 @@ namespace MinorClanTroopRecruitment
 		public override void RegisterEvents()
 		{
 			CampaignEvents.OnNewGameCreatedEvent2.AddNonSerializedListener(this, new Action(this.OnAfterNewGameCreated));
-			CampaignEvents.DailyTickTownEvent.AddNonSerializedListener(this, new Action<Town>(this.DailyTickTown));
 			CampaignEvents.SettlementEntered.AddNonSerializedListener(this, new Action<MobileParty, Settlement, Hero>(this.OnSettlementEntered));
 			CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnGameLoaded));
 			CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnSessionLaunched));
+			if(Settings.Settings.Instance.UpdateTiming.SelectedValue == "Weekly")
+			{
+				CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, new Action(this.WeeklyTickTown));
+			}
+			else
+			{
+				CampaignEvents.DailyTickTownEvent.AddNonSerializedListener(this, new Action<Town>(this.DailyTickTown));
+			}
 		}
 
 		// Only triggers on loaded games
@@ -100,6 +107,13 @@ namespace MinorClanTroopRecruitment
 		private void DailyTickTown(Town town)
 		{
 			this.UpdateCurrentMercenaryTroopAndCount(town);
+		}
+		private void WeeklyTickTown()
+		{
+			foreach (Town town in Town.AllTowns)
+			{
+				this.UpdateCurrentMercenaryTroopAndCount(town);
+			}
 		}
 		
 
