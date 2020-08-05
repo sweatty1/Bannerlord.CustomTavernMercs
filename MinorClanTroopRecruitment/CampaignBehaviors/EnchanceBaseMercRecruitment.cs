@@ -22,9 +22,38 @@ namespace MinorClanTroopRecruitment
 
 		protected void AddDialogs(CampaignGameStarter campaignGameStarter)
 		{
+			campaignGameStarter.AddPlayerLine("mercenary_recruit_talk_hire_one", "mercenary_tavern_talk", "mercenary_tavern_talk_hire_one", "All right. I would only like to hire one of you. Here is {GOLD_AMOUNT_FOR_ONE}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_mercenary_recruit_one), new ConversationSentence.OnConsequenceDelegate(this.conversation_mercenary_recruit_one_on_consequence), 110, null, null);
+			campaignGameStarter.AddDialogLine("mercenary_recruit_talk_hire_one_response", "mercenary_tavern_talk_hire_one", "mercenary_tavern_talk", "Deal, One of us will report to your party outside the gates after gathering their gear. Need anything else?", new ConversationSentence.OnConditionDelegate(this.conversation_mercenary_recruit_one_post_fix_gold), null, 100, null);
+
 			campaignGameStarter.AddPlayerLine("mercenary_recruit_talk_hire_all_past_limit", "mercenary_tavern_talk", "mercenary_tavern_talk_hire", "All right. I will hire {?PLURAL}all of you{?}you{\\?}. Here is {GOLD_AMOUNT_MOD}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_mercenary_recruit_accept_all_on_condition_past_limit), new ConversationSentence.OnConsequenceDelegate(this.conversation_mercenary_recruit_accept_all_on_consequence), 110, null, null);
 			campaignGameStarter.AddPlayerLine("mercenary_recruit_talk_hire_some_past_limit", "mercenary_tavern_talk", "mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT_SOME_AFFORD} of you. Here is {GOLD_AMOUNT_SOME_AFFORD}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_mercenary_recruit_accept_some_on_condition_past_limit_afford), new ConversationSentence.OnConsequenceDelegate(this.conversation_mercenary_recruit_accept_some_past_limit_on_consequence), 110, null, null);
 		}
+
+		private bool conversation_mercenary_recruit_one()
+		{
+			Town.TownMercenaryData mercData = MobileParty.MainParty.CurrentSettlement.Town.MercenaryData;
+			int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(mercData.TroopType, Hero.MainHero, false);
+			int numOfTroopPlayerCanBuy = Hero.MainHero.Gold / troopRecruitmentCost;
+			MBTextManager.SetTextVariable("GOLD_AMOUNT_FOR_ONE", troopRecruitmentCost, false);
+			return 1 < mercData.Number && numOfTroopPlayerCanBuy > 1;
+		}
+
+		private void conversation_mercenary_recruit_one_on_consequence()
+		{
+			this.BuyMinorClanMercenariesInTavern(1);
+		}
+		
+		// This shouldn't need to be here but Bug handling GOLD_AMOUNT it is somehow getting set to default value instead of an updated value
+		// Since I can't change the core to split the variables used in the start dialog and the purchase dialog I need to update it somewhere
+		// This function would be null otherwise So I figure the fix is best here for now.
+		private bool conversation_mercenary_recruit_one_post_fix_gold()
+		{
+			Town.TownMercenaryData mercData = MobileParty.MainParty.CurrentSettlement.Town.MercenaryData;
+			int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(mercData.TroopType, Hero.MainHero, false);
+			MBTextManager.SetTextVariable("GOLD_AMOUNT", troopRecruitmentCost * mercData.Number, false);
+			return true;
+		}
+
 		private bool conversation_mercenary_recruit_accept_all_on_condition_past_limit()
 		{
 			Town.TownMercenaryData mercData = MobileParty.MainParty.CurrentSettlement.Town.MercenaryData;
@@ -92,6 +121,43 @@ namespace MinorClanTroopRecruitment
 			{
 				BuyRegMercenariesViaGameMenuToPartyLimit();
 			}, false, 1, false);
+			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_regular_mercenaries_hire_one", "{=*}Recruit 1 {REG_MERCENARY_NAME_ONLY_ONE} ({REG_TOTAL_AMOUNT_ONLY_ONE}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(this.BuyRegMercsViaMenuConditionHireOne), delegate (MenuCallbackArgs x)
+			{
+				BuyRegMercenariesViaGameMenuHireOne();
+			}, false, 1, false);
+		}
+
+		private bool BuyRegMercsViaMenuConditionHireOne(MenuCallbackArgs args)
+		{
+			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData != null && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number > 1)
+			{
+				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType, null, false);
+				int numOfTroopPlayerCanBuy = Hero.MainHero.Gold / troopRecruitmentCost;
+				if (numOfTroopPlayerCanBuy > 1)
+				{
+					MBTextManager.SetTextVariable("REG_MERCENARY_NAME_ONLY_ONE", MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType.Name, false);
+					MBTextManager.SetTextVariable("REG_TOTAL_AMOUNT_ONLY_ONE", troopRecruitmentCost, false);
+					args.optionLeaveType = GameMenuOption.LeaveType.RansomAndBribe;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private void BuyRegMercenariesViaGameMenuHireOne()
+		{
+			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData != null && MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.Number > 1)
+			{
+				int troopRecruitmentCost = Campaign.Current.Models.PartyWageModel.GetTroopRecruitmentCost(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType, null, false);
+				if (Hero.MainHero.Gold >= troopRecruitmentCost)
+				{
+					int numOfMercs = 1;
+					MobileParty.MainParty.MemberRoster.AddToCounts(MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.TroopType, numOfMercs, false, 0, 0, true, -1);
+					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
+					MobileParty.MainParty.CurrentSettlement.Town.MercenaryData.ChangeMercenaryCount(-numOfMercs);
+					GameMenu.SwitchToMenu("town_backstreet");
+				}
+			}
 		}
 
 		private bool BuyRegMercsViaMenuConditionToPartyLimit(MenuCallbackArgs args)
