@@ -30,7 +30,6 @@ namespace MinorClanTroopRecruitment
         private void AddBehaviors(CampaignGameStarter gameInitializer)
         {
             gameInitializer.AddBehavior(new RecruitMinorClanTroopBehaviors());
-            //gameInitializer.AddBehavior(new EnchanceBaseMercRecruitment());
         }
     }
 }

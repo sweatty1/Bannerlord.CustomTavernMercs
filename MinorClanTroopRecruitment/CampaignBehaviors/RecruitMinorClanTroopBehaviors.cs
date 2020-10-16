@@ -21,7 +21,6 @@ namespace MinorClanTroopRecruitment
 			CampaignEvents.SettlementEntered.AddNonSerializedListener(this, new Action<MobileParty, Settlement, Hero>(this.OnSettlementEntered));
 			CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnGameLoaded));
 			CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnSessionLaunched));
-			//CampaignEvents.LocationCharactersAreReadyToSpawnEvent.AddNonSerializedListener(this, new Action<Dictionary<string, int>>(this.LocationCharactersAreReadyToSpawnMinorClanMercs));
 			if (Settings.Settings.Instance.UpdateTiming.SelectedValue == "Weekly")
 			{
 				CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, new Action(this.WeeklyTickTown));
@@ -88,20 +87,6 @@ namespace MinorClanTroopRecruitment
 				}
 			}
 		}
-
-		//private void LocationCharactersAreReadyToSpawnMinorClanMercs(Dictionary<string, int> unusedUsablePointCount)
-		//{
-		//	Settlement settlement = PlayerEncounter.LocationEncounter.Settlement;
-		//	Location locationWithId = settlement.LocationComplex.GetLocationWithId("tavern");
-		//	if (locationWithId != null && settlement.IsTown && CampaignMission.Current != null && CampaignMission.Current.Location == locationWithId)
-		//	{
-		//		int num;
-		//		if (unusedUsablePointCount.TryGetValue("spawnpoint_mercenary", out num))
-		//		{
-		//			locationWithId.AddLocationCharacters(new CreateLocationCharacterDelegate(this.CreateMinorClanMercenary), settlement.Culture, LocationCharacter.CharacterRelations.Neutral, 1);
-		//		}
-		//	}
-		//}
 
 		private LocationCharacter CreateMinorClanMercenary(CultureObject culture, LocationCharacter.CharacterRelations relation)
 		{
@@ -201,7 +186,7 @@ namespace MinorClanTroopRecruitment
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_all", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?MCMERCS_PLURAL}all of you{?}you{\\?}. Here is {MCMERCS_GOLD_AMOUNT_ALL}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_consequence), 100, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_all_past_limit", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. I will hire {?MCMERCS_PLURAL}all of you{?}you{\\?}. Here is {MCMERCS_GOLD_AMOUNT_ALL}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_condition_past_limit), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_all_on_consequence), 110, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some_past_limit", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MCMERCS_MERCENARY_COUNT_SOME_AFFORD} of you. Here is {MCMERCS_GOLD_AMOUNT_SOME_AFFORD}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition_past_limit_afford), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_past_limit_on_consequence), 110, null, null);
-			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MERCENARY_COUNT_SOME} of you. Here is {MCMERCS_GOLD_AMOUNT_SOME}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_consequence), 100, null, null);
+			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_hire_some", "minor_clan_mercenary_tavern_talk", "minor_clan_mercenary_tavern_talk_hire", "All right. But I can only hire {MCMERCS_MERCENARY_COUNT_SOME} of you. Here is {MCMERCS_GOLD_AMOUNT_SOME}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_minor_clan_mercenary_recruit_accept_some_on_consequence), 100, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_reject_no_gold", "minor_clan_mercenary_tavern_talk", "close_window", "That sounds good. But I can't hire any more men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_reject_gold_or_party_size_on_condition), null, 100, null, null);
 			campaignGameStarter.AddPlayerLine("minor_clan_recruit_talk_reject_party_full", "minor_clan_mercenary_tavern_talk", "close_window", "Sorry. I don't need any other men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_dont_need_men_on_condition), null, 100, null, null);
 			campaignGameStarter.AddDialogLine("minor_clan_recruit_talk_hired_end", "minor_clan_mercenary_tavern_talk_hire", "close_window", "{RANDOM_HIRE_SENTENCE}", new ConversationSentence.OnConditionDelegate(this.conversation_minor_clan_mercenary_recruit_end_on_condition), null, 100, null);
