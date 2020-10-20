@@ -137,12 +137,12 @@ namespace MinorClanTroopRecruitment
 				return;
 			}
 			int r = MBRandom.Random.Next(possibleMercTroops.Count);
-			TroopInfo newTroopInfo = possibleMercTroops[r];
 			int numbOfUnits = FindNumberOfMercenariesWillBeAdded();
 			if (MBRandom.RandomFloat > Settings.Settings.Instance.PossibilityOfSpawn)
 			{
 				numbOfUnits = 0;
 			}
+			TroopInfo newTroopInfo = possibleMercTroops[r];
 			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(newTroopInfo, numbOfUnits);
 
 			// Since we don't have access to MercenaryNUmberChangedInTown or MercenaryTroopChangedInTown

@@ -17,6 +17,9 @@ namespace MinorClanTroopRecruitment
 
 		public CharacterObject TroopInfoCharObject()
 		{
+			if (TroopInfo == null) { 
+				return null; 
+			}
 			return TroopInfo.TroopCharacterObject;
 		}
 
@@ -61,7 +64,7 @@ namespace MinorClanTroopRecruitment
 		}
 	}
 
-	public struct TroopInfo
+	public class TroopInfo
 	{
 		public CharacterObject TroopCharacterObject;
 		public bool HasCustomCost;
@@ -72,15 +75,6 @@ namespace MinorClanTroopRecruitment
 			TroopCharacterObject = characterObject;
 			HasCustomCost = hasCustomCost;
 			CustomCost = customCost;
-		}
-
-		public static bool operator ==(TroopInfo troop1, TroopInfo troop2)
-		{
-			return troop1.Equals(troop2);
-		}
-		public static bool operator !=(TroopInfo troop1, TroopInfo troop2)
-		{
-			return !troop1.Equals(troop2);
 		}
 	}
 }
