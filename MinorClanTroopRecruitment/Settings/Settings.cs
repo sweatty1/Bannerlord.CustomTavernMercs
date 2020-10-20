@@ -2,17 +2,50 @@
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Data;
 using MCM.Abstractions.Settings.Base.Global;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace MinorClanTroopRecruitment.Settings
 {
     class Settings : AttributeGlobalSettings<Settings>
     {
+
+        private string CustomJsonFolder => Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\MinorClanTroopRecruitment\\CustomOptions");
         public override string Id => "MinorClanTroopRecruitment";
-        public override string DisplayName => "Minor Clan Troop Recruitment"; //{typeof(MCMUISettings).Assembly.GetName().Version.ToString(3)}";
+        public override string DisplayName => "Minor Clan Troop Recruitment";
+        private List<string> spawnOptionsProgrammatically => new List<string> { "Any Culture", "Same Culture Only" };
+        public Settings()
+        {
+            if (!Directory.Exists(CustomJsonFolder))
+            {
+                Directory.CreateDirectory(CustomJsonFolder);
+                string executeDirectoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string pathToModuleData = @"..\..\ModuleData\";
+                string pathToModuleDataFolder = Path.GetFullPath(Path.Combine(executeDirectoryPath, pathToModuleData));
+                string[] defaultCustomExamples = Directory.GetFiles(pathToModuleDataFolder);
+                foreach (string exampleFilePath in defaultCustomExamples)
+                {
+                    string exampleFileName = Path.GetFileName(exampleFilePath);
+                    string destinationPath = Path.Combine(CustomJsonFolder, exampleFileName);
+                    File.Copy(exampleFilePath, destinationPath, true);
+                }
+            }
+            string[] customFilePaths = Directory.GetFiles(CustomJsonFolder, "*.json");
+            List<string> customFiles = new List<string>();
+            foreach (string customFilePath in customFilePaths)
+            {
+                string fileName = Path.GetFileName(customFilePath);
+                customFiles.Add(fileName);
+            }
+            IEnumerable<string> spawnOptions = spawnOptionsProgrammatically.Concat(customFiles);
+            RecruitmentSettings = new DefaultDropdown<string>(spawnOptions, 0);
+        }
 
         [SettingPropertyDropdown("Mercenary Spawn Towns", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Restrict the towns that Minor Clans mercenaries can spawn in.")]
         [SettingPropertyGroup("General")]
-        public DefaultDropdown<string> RecruitmentSettings { get; set; } = new DefaultDropdown<string>(new string[] { "Any Culture", "Same Culture Only", "Json Same Culture", "CustomA", "CustomB", "CustomC" }, 0);
+        public DefaultDropdown<string> RecruitmentSettings { get; set; }
 
         [SettingPropertyDropdown("Update Occurrence", Order = 2, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Determines when the available troops update, weekly or daily.")]
         [SettingPropertyGroup("General")]

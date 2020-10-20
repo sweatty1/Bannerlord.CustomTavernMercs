@@ -131,19 +131,19 @@ namespace MinorClanTroopRecruitment
 		private void UpdateCurrentMercenaryTroopAndCount(Town town)
 		{
 			CharacterObject oldTroopType = mc_merc_data.dictionaryOfMercAtTownData[town].TroopInfoCharObject();
-			List<TroopInfoStruct> possibleMercTroops = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleMercTroopInfo;
+			List<TroopInfo> possibleMercTroops = mc_merc_data.dictionaryOfMercAtTownData[town].PossibleMercTroopInfo;
 			if (possibleMercTroops.Count == 0)
 			{
 				return;
 			}
 			int r = MBRandom.Random.Next(possibleMercTroops.Count);
-			TroopInfoStruct newTroopStruct = possibleMercTroops[r];
+			TroopInfo newTroopInfo = possibleMercTroops[r];
 			int numbOfUnits = FindNumberOfMercenariesWillBeAdded();
 			if (MBRandom.RandomFloat > Settings.Settings.Instance.PossibilityOfSpawn)
 			{
 				numbOfUnits = 0;
 			}
-			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(newTroopStruct, numbOfUnits);
+			mc_merc_data.dictionaryOfMercAtTownData[town].ChangeMercenaryType(newTroopInfo, numbOfUnits);
 
 			// Since we don't have access to MercenaryNUmberChangedInTown or MercenaryTroopChangedInTown
 			// need way to trigger spawn of hire guy in tavern when inside of town on a daily update

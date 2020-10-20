@@ -12,21 +12,22 @@ namespace MinorClanTroopRecruitment
     {
         public Dictionary<Town, MinorClanMercData> dictionaryOfMercAtTownData;
 
+        private List<string> nonJsonOptions = new List<string>() { "Any Culture", "Same Culture Only" };
+
         public MinorClanMercDataHolder()
         {
-            List<string> jsonOptions = new List<string>() { "Json Same Culture", "CustomA", "CustomB", "CustomC" };
-            if (jsonOptions.Any(op => op == Settings.Settings.Instance.RecruitmentSettings.SelectedValue))
-            {
-                dictionaryOfMercAtTownData = CustomBuilder();
-            } else
+            if (nonJsonOptions.Any(op => op == Settings.Settings.Instance.RecruitmentSettings.SelectedValue))
             {
                 Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
                 foreach (Town town in Town.AllTowns)
                 {
-                    List<TroopInfoStruct> possibleClanTroops = possibleTownClans(town).Select(clan => new TroopInfoStruct(clan.BasicTroop, false, 0)).ToList();
+                    List<TroopInfo> possibleClanTroops = possibleTownClans(town).Select(clan => new TroopInfo(clan.BasicTroop, false, 0)).ToList();
                     dictionarySetUp.Add(town, new MinorClanMercData(possibleClanTroops));
                 }
                 dictionaryOfMercAtTownData = dictionarySetUp;
+            } else
+            {
+                dictionaryOfMercAtTownData = CustomBuilder();
             }
         }
 
@@ -40,7 +41,7 @@ namespace MinorClanTroopRecruitment
                 {
                     if (clan.IsMinorFaction && clan != Clan.PlayerClan && clanIsOfTownCulture(town, clan))
                     {
-                        minorClanList.Add(clan); // don't forget hidden minor clan "Kern"
+                        minorClanList.Add(clan);
                     }
                 }
                 return minorClanList;
@@ -81,24 +82,34 @@ namespace MinorClanTroopRecruitment
 
         private Dictionary<Town, MinorClanMercData> CustomBuilder()
         {
-            string executeDirectoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string customJsonPath = Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\MinorClanTroopRecruitment\\CustomOptions");
             string customJsonName = Settings.Settings.Instance.RecruitmentSettings.SelectedValue;
-            string pathToModuleData = @"..\..\ModuleData\";
-            pathToModuleData += $"{customJsonName}.json";
-            string pathToJson = Path.GetFullPath(Path.Combine(executeDirectoryPath, pathToModuleData));
+            string pathToJson = Path.Combine(customJsonPath, customJsonName);
 
             // set up the dictionary for custom
             Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();
             foreach (Town town in Town.AllTowns)
             {
-                dictionarySetUp.Add(town, new MinorClanMercData(new List<TroopInfoStruct>()));
+                dictionarySetUp.Add(town, new MinorClanMercData(new List<TroopInfo>()));
             }
 
             if (File.Exists(pathToJson))
             {
                 List<CustomMercData> deserializedCustomListUnitInfo;
-                string customJson = File.ReadAllText(pathToJson);
+                string customJson;
+                try {
+                    customJson = File.ReadAllText(pathToJson);
+                } catch
+                {
+                    DisplayWarningCustomJsonFailure($"{customJsonName}.json ecountered an error Opening or Reading the file. Is it open in another Program?");
+                    return dictionarySetUp;
+                }
                 deserializedCustomListUnitInfo = JsonConvert.DeserializeObject<List<CustomMercData>>(customJson);
+                if (deserializedCustomListUnitInfo == null)
+                {
+                    DisplayWarningCustomJsonFailure($"{customJsonName}.json file was empty or lacked valid custom object.");
+                    return dictionarySetUp;
+                }
                 IEnumerable<Town> towns;
                 foreach (CustomMercData mercData in deserializedCustomListUnitInfo)
                 {
@@ -127,7 +138,7 @@ namespace MinorClanTroopRecruitment
                     }
                     foreach(Town town in towns)
                     {
-                        dictionarySetUp[town].PossibleMercTroopInfo.Add(new TroopInfoStruct(troopType, mercData.CustomCost, mercData.Cost));
+                        dictionarySetUp[town].PossibleMercTroopInfo.Add(new TroopInfo(troopType, mercData.CustomCost, mercData.Cost));
                     }
                 }
                 return dictionarySetUp;

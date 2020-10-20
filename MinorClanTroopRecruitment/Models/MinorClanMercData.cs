@@ -5,15 +5,15 @@ namespace MinorClanTroopRecruitment
 {
     public class MinorClanMercData
     {
-		public MinorClanMercData(List<TroopInfoStruct> possibleMercTroopsTypes)
+		public MinorClanMercData(List<TroopInfo> possibleMercTroopsTypes)
 		{
 			PossibleMercTroopInfo = possibleMercTroopsTypes;
 		}
 
-		public TroopInfoStruct TroopInfo { get; private set; }
+		public TroopInfo TroopInfo { get; private set; }
 		public int Number { get; private set; }
 
-		public List<TroopInfoStruct> PossibleMercTroopInfo { get; private set; }
+		public List<TroopInfo> PossibleMercTroopInfo { get; private set; }
 
 		public CharacterObject TroopInfoCharObject()
 		{
@@ -32,11 +32,11 @@ namespace MinorClanTroopRecruitment
 			}
 		}
 
-		public void ChangeMercenaryType(TroopInfoStruct newTroopStruct, int number)
+		public void ChangeMercenaryType(TroopInfo newTroopInfo, int number)
 		{
-			if (newTroopStruct != TroopInfo)
+			if (newTroopInfo != TroopInfo)
 			{
-				TroopInfo = newTroopStruct;
+				TroopInfo = newTroopInfo;
 				Number = number;
 				return;
 			}
@@ -61,24 +61,24 @@ namespace MinorClanTroopRecruitment
 		}
 	}
 
-	public struct TroopInfoStruct
+	public struct TroopInfo
 	{
 		public CharacterObject TroopCharacterObject;
 		public bool HasCustomCost;
 		public int CustomCost;
 
-		public TroopInfoStruct(CharacterObject characterObject, bool hasCustomCost, int customCost)
+		public TroopInfo(CharacterObject characterObject, bool hasCustomCost, int customCost)
 		{
 			TroopCharacterObject = characterObject;
 			HasCustomCost = hasCustomCost;
 			CustomCost = customCost;
 		}
 
-		public static bool operator ==(TroopInfoStruct troop1, TroopInfoStruct troop2)
+		public static bool operator ==(TroopInfo troop1, TroopInfo troop2)
 		{
 			return troop1.Equals(troop2);
 		}
-		public static bool operator !=(TroopInfoStruct troop1, TroopInfoStruct troop2)
+		public static bool operator !=(TroopInfo troop1, TroopInfo troop2)
 		{
 			return !troop1.Equals(troop2);
 		}
