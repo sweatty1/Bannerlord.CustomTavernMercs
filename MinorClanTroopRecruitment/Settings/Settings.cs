@@ -43,7 +43,7 @@ namespace MinorClanTroopRecruitment.Settings
             RecruitmentSettings = new DefaultDropdown<string>(spawnOptions, 0);
         }
 
-        [SettingPropertyDropdown("Mercenary Spawn Towns", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Restrict the towns that Minor Clans mercenaries can spawn in.")]
+        [SettingPropertyDropdown("Recruitment Setting", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Option for spawn behavior, defautl or custom.")]
         [SettingPropertyGroup("General")]
         public DefaultDropdown<string> RecruitmentSettings { get; set; }
 

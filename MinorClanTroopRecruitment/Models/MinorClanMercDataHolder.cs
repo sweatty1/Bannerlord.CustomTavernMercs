@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -16,6 +17,14 @@ namespace MinorClanTroopRecruitment
 
         public MinorClanMercDataHolder()
         {
+            try {
+                string selectedValue = Settings.Settings.Instance.RecruitmentSettings.SelectedValue;
+            }
+            catch
+            {
+                InformationManager.DisplayMessage(new InformationMessage($"Error: Recruitment Setting was invalid. Defaulting to Any Culture. Check Options."));
+                Settings.Settings.Instance.RecruitmentSettings.SelectedValue = "Any Culture";
+            }
             if (nonJsonOptions.Any(op => op == Settings.Settings.Instance.RecruitmentSettings.SelectedValue))
             {
                 Dictionary<Town, MinorClanMercData> dictionarySetUp = new Dictionary<Town, MinorClanMercData>();

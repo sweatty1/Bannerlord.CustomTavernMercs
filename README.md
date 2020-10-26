@@ -1,7 +1,5 @@
 # BannerlordMinorClanTroopRecruitment
 
-Currently Working with 1.4.2 and tested on 1.4.3
-
 Adds the ability to Recruit Minor Clan Troops as mercenaries. They act like existing mercenaries and refresh every day.
 
 Link to Nexus: [here](https://www.nexusmods.com/mountandblade2bannerlord/mods/1520/)
@@ -15,17 +13,25 @@ This also means this mod can be removed at anytime and not affect current saves.
 
 # Manual Installing
  
- - Extract the zip file to ﻿C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules.
-    - Make sure that SubModule.xml and the bin folder are now in ﻿C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\MinorClanTroopRecruitment
+ - Extract the zip file to 
+ ```text 
+ C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules.
+ ```
 - Navigate to "Modules > MinorClanTroopRecruitment> bin > Win64_Shipping_Client" in your game files.
 - Right click the "MinorClanTroopRecruitment.dll" and click properties
 - If you see an unblock at the bottom, click it. (Visual reference: https://www.limilabs.com/blog/unblock-dll-file)
+- This Mod needs MCM, Mod Configuration Menu to run. It handles the options screen. It can be downloaded [here](https://www.nexusmods.com/mountandblade2bannerlord/mods/612)
 - Start the Bannerlord launcher and then tick MinorClanTroopRecruitment in the Singleplayer > Mods tab.
 
 # Creating your own list of Available Mercs:
-Inside of the mod's ModuleData folder are 4 json files that can be customized.\
-Although suggested to only edit "CustomA", "CustomB", and "CustomC".\
-Check out the wiki page [here](https://github.com/sweatty1/BannerlordMinorClanTroopRecruitment/wiki/Bannerlord-Minor-Clan-Troop-Recruitment-Wiki). If interested in modifying one.
+On first time loading post 1.1.3 the mod creates a folder located at 
+```text
+C:\Users\*currentUser\Documents\Mount and Blade II Bannerlord\Configs\ModSettings\MinorClanTroopRecruitment\CustomOptions
+```
+Inside of which will be the default example custom json files.\
+Creating your own json file and placing it in this folder will make it appear as a selectable option.\
+Beware that anytime you add or remove a customfile that you should verify your selected option is correct.\
+Check out the wiki page [here](https://github.com/sweatty1/BannerlordMinorClanTroopRecruitment/wiki/Bannerlord-Minor-Clan-Troop-Recruitment-Wiki). If interested in modifying an existing one or creating your own.
 
 # Development
  
