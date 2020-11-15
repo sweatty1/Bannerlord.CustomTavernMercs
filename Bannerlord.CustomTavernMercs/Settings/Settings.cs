@@ -11,7 +11,6 @@ namespace Bannerlord.CustomTavernMercs.Settings
 {
     class Settings : AttributeGlobalSettings<Settings>
     {
-
         private string CustomJsonFolder => Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\CustomTavernMercs");
         public override string Id => "CustomTavernMercs";
         public override string DisplayName => "Custom Tavern Mercenaries";
@@ -43,7 +42,7 @@ namespace Bannerlord.CustomTavernMercs.Settings
             RecruitmentSettings = new DefaultDropdown<string>(spawnOptions, 0);
         }
 
-        [SettingPropertyDropdown("Recruitment Setting", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Option for spawn behavior, defautl or custom.")]
+        [SettingPropertyDropdown("Recruitment Setting", Order = 1, RequireRestart = true, HintText = "Requires a Reload to take affect if in game. Option for spawn behavior, default or custom.")]
         [SettingPropertyGroup("General")]
         public DefaultDropdown<string> RecruitmentSettings { get; set; }
 
@@ -67,8 +66,13 @@ namespace Bannerlord.CustomTavernMercs.Settings
         [SettingPropertyGroup("General")]
         public float TroopMultiplier { get; set; } = 1f;
 
-        [SettingPropertyFloatingInteger("Chance For Clan Mercenaries", 0f, 1f, "#0%", Order = 7, RequireRestart = false, HintText = "Percent chance for minor clan mercenaries to spawn.")]
+        [SettingPropertyFloatingInteger("Chance For Mercenaries", 0f, 1f, "#0%", Order = 7, RequireRestart = false, HintText = "Percent chance for custom mercenaries to spawn at each town. On weekly or daily occurence.")]
         [SettingPropertyGroup("General")]
         public float PossibilityOfSpawn { get; set; } = 1.00f;
+
+        [SettingPropertyBool("Share Mercenary Spawn Point", Order = 8, RequireRestart = false, HintText = "Custom Mercenaries will spawn in the same locations as normal mercenaries instead of among the townsfolk. WARNING: May cause crash use at own risk.")]
+        [SettingPropertyGroup("General")]
+        public bool ShareMercenarySpawnTag { get; set; } = false;
+
     }
 }

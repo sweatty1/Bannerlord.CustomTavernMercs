@@ -63,7 +63,6 @@ namespace Bannerlord.CustomTavernMercs
 				}
 			}
 		}
-
 		public void OnSettlementEntered(MobileParty mobileParty, Settlement settlement, Hero hero)
 		{
 			if (mobileParty != MobileParty.MainParty) return;
@@ -86,7 +85,12 @@ namespace Bannerlord.CustomTavernMercs
 		private LocationCharacter CreateCustomMercenary(CultureObject culture, LocationCharacter.CharacterRelations relation)
 		{
 			Settlement currentSettlement = MobileParty.MainParty.CurrentSettlement;
-			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(custom_merc_data_holder.dictionaryOfMercAtTownData[currentSettlement.Town].TroopInfoCharObject(), -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), "npc_common", true, relation, null, false, false, null, false, false, true);
+			string spawnTag = "npc_common";
+			if(Settings.Settings.Instance.ShareMercenarySpawnTag)
+			{
+				spawnTag = "spawnpoint_mercenary";
+			}
+			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(custom_merc_data_holder.dictionaryOfMercAtTownData[currentSettlement.Town].TroopInfoCharObject(), -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), spawnTag, true, relation, null, false, false, null, false, false, true);
 		}
 
 		private void DoesCustomMercenaryCharacterNeedRefresh(Settlement settlement, CharacterObject oldTroopType)
@@ -163,22 +167,47 @@ namespace Bannerlord.CustomTavernMercs
 			return MBRandom.RoundRandomized(baseCost * recruitCostMultiplier);
 		}
 
-
 		// TAVERN CODE
 		protected void AddDialogs(CampaignGameStarter campaignGameStarter)
 		{
-			campaignGameStarter.AddDialogLine("custom_merc_recruit_talk_start_plural", "start", "custom_merc_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? Me and {?CMERCS_PLURAL}{CMERCS_MERCENARY_COUNT} of my mates{?}one of my mates{\\?} looking for a master. You might call us mercenaries, like. We'll join you for {CMERCS_GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_plural_start_on_condition), null, 150, null);
-			campaignGameStarter.AddDialogLine("custom_merc_recruit_talk_start_singlular", "start", "custom_merc_mercenary_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? I am looking for a master. I'll join you for {CMERCS_GOLD_AMOUNT}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_single_start_on_condition), null, 150, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_hire_one", "custom_merc_mercenary_tavern_talk", "custom_merc_mercenary_tavern_talk_hire_one", "All right. I would only like to hire one of you. Here is {CMERCS_GOLD_AMOUNT_FOR_ONE}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_one), new ConversationSentence.OnConsequenceDelegate(this.conversation_custom_mercenary_recruit_one_on_consequence), 110, null, null);
-			campaignGameStarter.AddDialogLine("custom_merc_recruit_talk_hire_one_response", "custom_merc_mercenary_tavern_talk_hire_one", "custom_merc_mercenary_tavern_talk", "Deal, One of us will report to your party outside the gates after gathering their gear. Need anything else?", null, null, 100, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_hire_all", "custom_merc_mercenary_tavern_talk", "custom_merc_mercenary_tavern_talk_hire", "All right. I will hire {?CMERCS_PLURAL}all of you{?}you{\\?}. Here is {CMERCS_GOLD_AMOUNT_ALL}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_accept_all_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_custom_mercenary_recruit_accept_all_on_consequence), 100, null, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_hire_all_past_limit", "custom_merc_mercenary_tavern_talk", "custom_merc_mercenary_tavern_talk_hire", "All right. I will hire {?CMERCS_PLURAL}all of you{?}you{\\?}. Here is {CMERCS_GOLD_AMOUNT_ALL}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_accept_all_on_condition_past_limit), new ConversationSentence.OnConsequenceDelegate(this.conversation_custom_mercenary_recruit_accept_all_on_consequence), 110, null, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_hire_some_past_limit", "custom_merc_mercenary_tavern_talk", "custom_merc_mercenary_tavern_talk_hire", "All right. But I can only hire {CMERCS_MERCENARY_COUNT_SOME_AFFORD} of you. Here is {CMERCS_GOLD_AMOUNT_SOME_AFFORD}{GOLD_ICON} (Hires Past Party Limit)", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_accept_some_on_condition_past_limit_afford), new ConversationSentence.OnConsequenceDelegate(this.conversation_custom_mercenary_recruit_accept_some_past_limit_on_consequence), 110, null, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_hire_some", "custom_merc_mercenary_tavern_talk", "custom_merc_mercenary_tavern_talk_hire", "All right. But I can only hire {CMERCS_MERCENARY_COUNT_SOME} of you. Here is {CMERCS_GOLD_AMOUNT_SOME}{GOLD_ICON}", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_accept_some_on_condition), new ConversationSentence.OnConsequenceDelegate(this.conversation_custom_mercenary_recruit_accept_some_on_consequence), 100, null, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_reject_no_gold", "custom_merc_mercenary_tavern_talk", "close_window", "That sounds good. But I can't hire any more men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_reject_gold_or_party_size_on_condition), null, 100, null, null);
-			campaignGameStarter.AddPlayerLine("custom_merc_recruit_talk_reject_party_full", "custom_merc_mercenary_tavern_talk", "close_window", "Sorry. I don't need any other men right now.", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_dont_need_men_on_condition), null, 100, null, null);
-			campaignGameStarter.AddDialogLine("custom_merc_recruit_talk_hired_end", "custom_merc_mercenary_tavern_talk_hire", "close_window", "{RANDOM_HIRE_SENTENCE}", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruit_end_on_condition), null, 100, null);
-			campaignGameStarter.AddDialogLine("custom_merc_recruit_talk_start_post_hire", "start", "close_window", "Don't worry, I'll be ready. Just having a last drink for the road.", new ConversationSentence.OnConditionDelegate(this.conversation_custom_mercenary_recruited_on_condition), null, 150, null);
+			campaignGameStarter.AddDialogLine("custom_merc_talk_start_plural", "start", "custom_merc_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? Me and {?CMERCS_PLURAL}{CMERCS_MERCENARY_COUNT} of my mates{?}one of my mates{\\?} looking for a master. You might call us mercenaries, like. We'll join you for {CMERCS_GOLD_AMOUNT}{GOLD_ICON}",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_plural_start_condition), null, 150, null);
+			campaignGameStarter.AddDialogLine("custom_merc_talk_start_singlular", "start", "custom_merc_tavern_talk", "Do you have a need for fighters, {?PLAYER.GENDER}madam{?}sir{\\?}? I am looking for a master. I'll join you for {CMERCS_GOLD_AMOUNT}{GOLD_ICON}",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_single_start_condition), null, 150, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_hire_one", "custom_merc_tavern_talk", "custom_merc_tavern_talk_hire_one", "All right. I would only like to hire one of you. Here is {CMERCS_GOLD_AMOUNT_FOR_ONE}{GOLD_ICON}",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_hire_one_condition), delegate ()
+				{
+					HireCustomMercenariesInTavern(true);
+				}, 110, null, null);
+			campaignGameStarter.AddDialogLine("custom_merc_talk_hire_one_response", "custom_merc_tavern_talk_hire_one", "custom_merc_tavern_talk", "Deal, One of us will report to your party outside the gates after gathering their gear. Need anything else?", null, null, 100, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_hire_all", "custom_merc_tavern_talk", "custom_merc_tavern_talk_hire", "All right. I will hire {?CMERCS_PLURAL}all of you{?}you{\\?}. Here is {CMERCS_GOLD_AMOUNT_ALL}{GOLD_ICON}",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_hire_all_condition), delegate ()
+				{
+					HireCustomMercenariesInTavern(false, false);
+				}, 100, null, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_hire_all_past_limit", "custom_merc_tavern_talk", "custom_merc_tavern_talk_hire", "All right. I will hire {?CMERCS_PLURAL}all of you{?}you{\\?}. Here is {CMERCS_GOLD_AMOUNT_ALL}{GOLD_ICON} (Hires Past Party Limit)",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_hire_all_past_limit_condition), delegate ()
+				{
+					HireCustomMercenariesInTavern(false, true);
+				}, 110, null, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_hire_some_past_limit", "custom_merc_tavern_talk", "custom_merc_tavern_talk_hire", "All right. But I can only hire {CMERCS_MERCENARY_COUNT_SOME_AFFORD} of you. Here is {CMERCS_GOLD_AMOUNT_SOME_AFFORD}{GOLD_ICON} (Hires Past Party Limit)",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_afford_hire_some_past_limit_condition), delegate ()
+				{
+					HireCustomMercenariesInTavern(false, true);
+				}, 110, null, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_hire_some", "custom_merc_tavern_talk", "custom_merc_tavern_talk_hire", "All right. But I can only hire {CMERCS_MERCENARY_COUNT_SOME} of you. Here is {CMERCS_GOLD_AMOUNT_SOME}{GOLD_ICON}",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_hire_some_on_condition), delegate ()
+				{
+					HireCustomMercenariesInTavern(false, false);
+				}, 100, null, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_reject_no_gold", "custom_merc_tavern_talk", "close_window", "That sounds good. But I can't hire any more men right now.",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_reject_gold_or_party_size_condition), null, 100, null, null);
+			campaignGameStarter.AddPlayerLine("custom_merc_talk_reject_party_full", "custom_merc_tavern_talk", "close_window", "Sorry. I don't need any other men right now.",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_dont_need_men_condition), null, 100, null, null);
+			campaignGameStarter.AddDialogLine("custom_merc_talk_hired_end", "custom_merc_tavern_talk_hire", "close_window", "{RANDOM_HIRE_SENTENCE}",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_end_condition), null, 100, null);
+			campaignGameStarter.AddDialogLine("custom_merc_talk_start_post_hire", "start", "close_window", "Don't worry, I'll be ready. Just having a last drink for the road.",
+				new ConversationSentence.OnConditionDelegate(custom_mercenary_post_hire_start_condition), null, 150, null);
 		}
 
 		private bool CustomMercIsInTavern(CustomMercData customMercData)
@@ -191,7 +220,7 @@ namespace Bannerlord.CustomTavernMercs
 		}
 
 		// Conditions for starting line dialog
-		private bool conversation_custom_mercenary_recruit_plural_start_on_condition()
+		private bool custom_mercenary_plural_start_condition()
 		{
 			if(MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
@@ -206,7 +235,7 @@ namespace Bannerlord.CustomTavernMercs
 			return flag;
 		}
 
-		private bool conversation_custom_mercenary_recruit_single_start_on_condition()
+		private bool custom_mercenary_single_start_condition()
 		{
 			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
@@ -219,15 +248,8 @@ namespace Bannerlord.CustomTavernMercs
 			return flag;
 		}
 
-		private bool conversation_custom_mercenary_recruited_on_condition()
-		{
-			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
-			CustomMercData mercData = GetCustomMercDataOfPlayerEncounter();
-			return CustomMercIsInTavern(mercData);
-		}
-
 		// Conditions for Hiring options and functions that follow
-		private bool conversation_custom_mercenary_recruit_one()
+		private bool custom_mercenary_hire_one_condition()
 		{
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
@@ -236,12 +258,7 @@ namespace Bannerlord.CustomTavernMercs
 			return 1 < customMercData.Number && numOfTroopPlayerCanBuy > 1;
 		}
 
-		private void conversation_custom_mercenary_recruit_one_on_consequence()
-		{
-			BuyCustomMercenariesInTavern(1);
-		}
-
-		private bool conversation_custom_mercenary_recruit_accept_all_on_condition()
+		private bool custom_mercenary_hire_all_condition()
 		{
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
@@ -251,7 +268,7 @@ namespace Bannerlord.CustomTavernMercs
 			return Hero.MainHero.Gold >= customMercData.Number * troopRecruitmentCost && numOfTroopSlotsOpen >= customMercData.Number;
 		}
 
-		private bool conversation_custom_mercenary_recruit_accept_all_on_condition_past_limit()
+		private bool custom_mercenary_hire_all_past_limit_condition()
 		{
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
@@ -262,12 +279,7 @@ namespace Bannerlord.CustomTavernMercs
 			return numOfTroopSlotsOpen < customMercData.Number && numOfTroopPlayerCanBuy >= customMercData.Number;
 		}
 
-		private void conversation_custom_mercenary_recruit_accept_all_on_consequence()
-		{
-			BuyCustomMercenariesInTavern(GetCustomMercDataOfPlayerEncounter().Number);
-		}
-
-		private bool conversation_custom_mercenary_recruit_accept_some_on_condition()
+		private bool custom_mercenary_hire_some_on_condition()
 		{
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
@@ -286,20 +298,7 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private void conversation_custom_mercenary_recruit_accept_some_on_consequence()
-		{
-			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
-			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
-			int numberToHire = 0;
-			while (Hero.MainHero.Gold > troopRecruitmentCost * (numberToHire + 1) && numOfTroopSlotsOpen > numberToHire)
-			{
-				numberToHire++;
-			}
-			BuyCustomMercenariesInTavern(numberToHire);
-		}
-
-		private bool conversation_custom_mercenary_recruit_accept_some_on_condition_past_limit_afford()
+		private bool custom_mercenary_afford_hire_some_past_limit_condition()
 		{
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
@@ -311,10 +310,7 @@ namespace Bannerlord.CustomTavernMercs
 				{
 					numberToHire++;
 				}
-				if (numberToHire <= numOfTroopSlotsOpen)
-				{
-					return false;
-				}
+				if (numberToHire <= numOfTroopSlotsOpen) return false;
 				MBTextManager.SetTextVariable("CMERCS_MERCENARY_COUNT_SOME_AFFORD", numberToHire);
 				MBTextManager.SetTextVariable("CMERCS_GOLD_AMOUNT_SOME_AFFORD", troopRecruitmentCost * numberToHire);
 				return true;
@@ -322,38 +318,22 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private void conversation_custom_mercenary_recruit_accept_some_past_limit_on_consequence()
+		// Conditions close Conversation
+		private bool custom_mercenary_post_hire_start_condition()
 		{
-			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
-			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
-			int numberToHire = 0;
-			while (Hero.MainHero.Gold > troopRecruitmentCost * (numberToHire + 1) && customMercData.Number > numberToHire)
-			{
-				numberToHire++;
-			}
-			BuyCustomMercenariesInTavern(numberToHire);
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
+			CustomMercData mercData = GetCustomMercDataOfPlayerEncounter();
+			return CustomMercIsInTavern(mercData);
 		}
 
-		private void BuyCustomMercenariesInTavern(int numberOfMercsToHire)
-		{
-			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
-			customMercData.ChangeMercenaryCount(-numberOfMercsToHire);
-			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
-			MobileParty.MainParty.AddElementToMemberRoster(customMercData.TroopInfoCharObject(), numberOfMercsToHire, false);
-			int amount = numberOfMercsToHire * troopRecruitmentCost;
-			GiveGoldAction.ApplyBetweenCharacters(Hero.MainHero, null, amount, false);
-			CampaignEventDispatcher.Instance.OnUnitRecruited(customMercData.TroopInfoCharObject(), numberOfMercsToHire);
-		}
-
-		// Conditions to trigger reject hiring options
-		private bool conversation_custom_mercenary_recruit_reject_gold_or_party_size_on_condition()
+		private bool custom_mercenary_reject_gold_or_party_size_condition()
 		{
 			int troopRecruitmentCost = this.troopRecruitmentCost(GetCustomMercDataOfPlayerEncounter());
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
 			return Hero.MainHero.Gold < troopRecruitmentCost || numOfTroopSlotsOpen <= 0;
 		}
 
-		private bool conversation_custom_mercenary_recruit_dont_need_men_on_condition()
+		private bool custom_mercenary_dont_need_men_condition()
 		{
 			int troopRecruitmentCost = this.troopRecruitmentCost(GetCustomMercDataOfPlayerEncounter());
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
@@ -361,33 +341,58 @@ namespace Bannerlord.CustomTavernMercs
 		}
 
 		// Successful hire npc phrase
-		public bool conversation_custom_mercenary_recruit_end_on_condition()
+		public bool custom_mercenary_end_condition()
 		{
 			MBTextManager.SetTextVariable("RANDOM_HIRE_SENTENCE", GameTexts.FindText("str_mercenary_tavern_talk_hire", MBRandom.RandomInt(4).ToString()));
 			return true;
 		}
 
+		// Actual Hiring from Tavern
+		private void HireCustomMercenariesInTavern(bool buyOne, bool pastPartyLimit = false)
+		{
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return;
+			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
+			if (customMercData == null) return;
+
+			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
+			int numberOfMercsToHire = 0;
+			if(buyOne)
+			{
+				numberOfMercsToHire = 1;
+			} else
+			{
+				int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
+				while (Hero.MainHero.Gold > troopRecruitmentCost * (numberOfMercsToHire + 1) && customMercData.Number > numberOfMercsToHire && (pastPartyLimit || numOfTroopSlotsOpen > numberOfMercsToHire))
+				{
+					numberOfMercsToHire++;
+				}
+			}
+			customMercData.ChangeMercenaryCount(-numberOfMercsToHire);
+			MobileParty.MainParty.AddElementToMemberRoster(customMercData.TroopInfoCharObject(), numberOfMercsToHire, false);
+			int amount = numberOfMercsToHire * troopRecruitmentCost;
+			GiveGoldAction.ApplyBetweenCharacters(Hero.MainHero, null, amount, false);
+			CampaignEventDispatcher.Instance.OnUnitRecruited(customMercData.TroopInfoCharObject(), numberOfMercsToHire);
+		}
+
 		// GAME MENU CODE
-		//Interaction of the Tavern from the Game Menu tested to work on 1.4.1
-		// these variables have these names otherwise if say MEN_COUNT would override the 1.4.1 Game Menu for normal mercs
 		public void AddGameMenus(CampaignGameStarter campaignGameStarter)
 		{
 			// index is location in menu 0 being top, 1 next if other of same index exist this are placed on top of them
-			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_all", "{=*}Recruit {C_MEN_COUNT} {C_MERCENARY_NAME} ({C_TOTAL_AMOUNT}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(BuyCustomMercsViaMenuCondition), delegate (MenuCallbackArgs x)
+			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_all", "{=*}Recruit {C_MEN_COUNT} {C_MERCENARY_NAME} ({C_TOTAL_AMOUNT}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(HireCustomMercsViaMenuCondition), delegate (MenuCallbackArgs x)
 			{
-				BuyCustomMecenariesViaGameMenu(false, false);
+				HireCustomMecenariesViaGameMenu(false, false);
 			}, false, 1, false);
-			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_party_limit", "{=*}Recruit to Party Limit {C_MEN_COUNT_PL} {C_MERCENARY_NAME_PL} ({C_TOTAL_AMOUNT_PL}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(BuyCustomMercsViaMenuConditionToPartyLimit), delegate (MenuCallbackArgs x)
+			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_party_limit", "{=*}Recruit to Party Limit {C_MEN_COUNT_PL} {C_MERCENARY_NAME_PL} ({C_TOTAL_AMOUNT_PL}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(HireCustomMercsViaMenuConditionToPartyLimit), delegate (MenuCallbackArgs x)
 			{
-				BuyCustomMecenariesViaGameMenu(false, true);
+				HireCustomMecenariesViaGameMenu(false, true);
 			}, false, 1, false);
-			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_hire_one", "{=*}Recruit 1 {C_MERCENARY_NAME_ONLY_ONE} ({C_TOTAL_AMOUNT_ONLY_ONE}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(BuyCustomMercsViaMenuConditionHireOne), delegate (MenuCallbackArgs x)
+			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_hire_one", "{=*}Recruit 1 {C_MERCENARY_NAME_ONLY_ONE} ({C_TOTAL_AMOUNT_ONLY_ONE}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(HireCustomMercsViaMenuConditionHireOne), delegate (MenuCallbackArgs x)
 			{
-				BuyCustomMecenariesViaGameMenu(true, false);
+				HireCustomMecenariesViaGameMenu(true, false);
 			}, false, 1, false);
 		}
 
-		private bool BuyCustomMercsViaMenuConditionHireOne(MenuCallbackArgs args)
+		private bool HireCustomMercsViaMenuConditionHireOne(MenuCallbackArgs args)
 		{
 			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
@@ -406,7 +411,7 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private bool BuyCustomMercsViaMenuCondition(MenuCallbackArgs args)
+		private bool HireCustomMercsViaMenuCondition(MenuCallbackArgs args)
 		{
 			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
@@ -427,7 +432,7 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private bool BuyCustomMercsViaMenuConditionToPartyLimit(MenuCallbackArgs args)
+		private bool HireCustomMercsViaMenuConditionToPartyLimit(MenuCallbackArgs args)
 		{
 			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
@@ -450,7 +455,7 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private void BuyCustomMecenariesViaGameMenu(bool buyingOne, bool toPartyLimit)
+		private void HireCustomMecenariesViaGameMenu(bool buyingOne, bool toPartyLimit)
 		{
 			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
