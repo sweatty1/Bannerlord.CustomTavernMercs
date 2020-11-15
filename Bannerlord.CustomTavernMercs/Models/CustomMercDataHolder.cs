@@ -42,26 +42,15 @@ namespace Bannerlord.CustomTavernMercs
         {
             var recruitmentType = Settings.Settings.Instance.RecruitmentSettings;
             var minorClanList = new List<Clan>();
-            if (recruitmentType.SelectedValue == "Same Culture Only")
+            bool anyCulture = recruitmentType.SelectedValue == "Any Culture";
+            foreach (Clan clan in Clan.All)
             {
-                foreach (Clan clan in Clan.All)
+                if (clan.IsMinorFaction && clan != Clan.PlayerClan && (anyCulture || ClanIsOfTownCulture(town, clan)))
                 {
-                    if (clan.IsMinorFaction && clan != Clan.PlayerClan && ClanIsOfTownCulture(town, clan))
-                    {
-                        minorClanList.Add(clan);
-                    }
+                    minorClanList.Add(clan);
                 }
-                return minorClanList;
-            } else {
-                foreach (Clan clan in Clan.All)
-                {
-                    if (clan.IsMinorFaction && clan != Clan.PlayerClan)
-                    {
-                        minorClanList.Add(clan);
-                    }
-                }
-                return minorClanList;
             }
+            return minorClanList;
         }
 
         private bool ClanIsOfTownCulture(Town town, Clan clan)

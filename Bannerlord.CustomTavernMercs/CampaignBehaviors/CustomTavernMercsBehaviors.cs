@@ -66,20 +66,15 @@ namespace Bannerlord.CustomTavernMercs
 
 		public void OnSettlementEntered(MobileParty mobileParty, Settlement settlement, Hero hero)
 		{
-			if (mobileParty != MobileParty.MainParty)
-			{
-				return;
-			}
+			if (mobileParty != MobileParty.MainParty) return;
 			AddCustomMercenaryCharacterToTavern(settlement);
 		}
 
 		// Adding Character to the Tavern
 		private void AddCustomMercenaryCharacterToTavern(Settlement settlement)
 		{
-
 			if (settlement.LocationComplex != null && settlement.IsTown && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
 			{
-				
 				Location locationWithId = Settlement.CurrentSettlement.LocationComplex.GetLocationWithId("tavern");
 				if (locationWithId != null)
 				{
@@ -131,10 +126,7 @@ namespace Bannerlord.CustomTavernMercs
 		{
 			CharacterObject oldTroopType = custom_merc_data_holder.dictionaryOfMercAtTownData[town].TroopInfoCharObject();
 			List<TroopInfo> possibleMercTroops = custom_merc_data_holder.dictionaryOfMercAtTownData[town].PossibleMercTroopInfo;
-			if (possibleMercTroops.Count == 0)
-			{
-				return;
-			}
+			if (possibleMercTroops.Count == 0) return;
 			int r = MBRandom.Random.Next(possibleMercTroops.Count);
 			int numbOfUnits = FindNumberOfMercenariesToAdd();
 			if (MBRandom.RandomFloat > Settings.Settings.Instance.PossibilityOfSpawn)
@@ -155,8 +147,8 @@ namespace Bannerlord.CustomTavernMercs
 		// start of the dialog and game Menu code flows
 		public void OnSessionLaunched(CampaignGameStarter campaignGameStarter)
 		{
-			this.AddDialogs(campaignGameStarter);
-			this.AddGameMenus(campaignGameStarter);
+			AddDialogs(campaignGameStarter);
+			AddGameMenus(campaignGameStarter);
 		}
 
 		private CustomMercData GetCustomMercDataOfPlayerEncounter()
@@ -201,10 +193,7 @@ namespace Bannerlord.CustomTavernMercs
 		// Conditions for starting line dialog
 		private bool conversation_custom_mercenary_recruit_plural_start_on_condition()
 		{
-			if(MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown)
-			{
-				return false;
-			}
+			if(MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			bool flag = customMercData.Number > 1 && CustomMercIsInTavern(customMercData);
 			if (flag)
@@ -219,10 +208,7 @@ namespace Bannerlord.CustomTavernMercs
 
 		private bool conversation_custom_mercenary_recruit_single_start_on_condition()
 		{
-			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown)
-			{
-				return false;
-			}
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
 			bool flag = customMercData.Number == 1 && CustomMercIsInTavern(customMercData);
 			if (flag)
@@ -235,10 +221,7 @@ namespace Bannerlord.CustomTavernMercs
 
 		private bool conversation_custom_mercenary_recruited_on_condition()
 		{
-			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown)
-			{
-				return false;
-			}
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
 			CustomMercData mercData = GetCustomMercDataOfPlayerEncounter();
 			return CustomMercIsInTavern(mercData);
 		}
@@ -392,22 +375,23 @@ namespace Bannerlord.CustomTavernMercs
 			// index is location in menu 0 being top, 1 next if other of same index exist this are placed on top of them
 			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_all", "{=*}Recruit {C_MEN_COUNT} {C_MERCENARY_NAME} ({C_TOTAL_AMOUNT}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(BuyCustomMercsViaMenuCondition), delegate (MenuCallbackArgs x)
 			{
-				BuyCustomMercenariesViaGameMenu(custom_merc_data_holder.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town]);
+				BuyCustomMecenariesViaGameMenu(false, false);
 			}, false, 1, false);
 			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_party_limit", "{=*}Recruit to Party Limit {C_MEN_COUNT_PL} {C_MERCENARY_NAME_PL} ({C_TOTAL_AMOUNT_PL}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(BuyCustomMercsViaMenuConditionToPartyLimit), delegate (MenuCallbackArgs x)
 			{
-				BuyCustomMercenariesViaGameMenuToPartyLimit(custom_merc_data_holder.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town]);
+				BuyCustomMecenariesViaGameMenu(false, true);
 			}, false, 1, false);
 			campaignGameStarter.AddGameMenuOption("town_backstreet", "recruit_custom_mercenaries_hire_one", "{=*}Recruit 1 {C_MERCENARY_NAME_ONLY_ONE} ({C_TOTAL_AMOUNT_ONLY_ONE}{GOLD_ICON})", new GameMenuOption.OnConditionDelegate(BuyCustomMercsViaMenuConditionHireOne), delegate (MenuCallbackArgs x)
 			{
-				BuyCustomMercenariesViaGameMenuHireOne(custom_merc_data_holder.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town]);
+				BuyCustomMecenariesViaGameMenu(true, false);
 			}, false, 1, false);
 		}
 
 		private bool BuyCustomMercsViaMenuConditionHireOne(MenuCallbackArgs args)
 		{
-			CustomMercData customMercData = custom_merc_data_holder.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && customMercData != null && customMercData.Number > 1)
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
+			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
+			if (customMercData != null && customMercData.Number > 1)
 			{
 				int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
 				int numOfTroopPlayerCanBuy = Hero.MainHero.Gold / troopRecruitmentCost;
@@ -422,26 +406,11 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private void BuyCustomMercenariesViaGameMenuHireOne(CustomMercData customMercData)
-		{
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && customMercData != null && customMercData.Number > 1)
-			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
-				if (Hero.MainHero.Gold >= troopRecruitmentCost)
-				{
-					int numOfMercs = 1;
-					MobileParty.MainParty.MemberRoster.AddToCounts(customMercData.TroopInfoCharObject(), numOfMercs, false, 0, 0, true, -1);
-					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
-					customMercData.ChangeMercenaryCount(-numOfMercs);
-					GameMenu.SwitchToMenu("town_backstreet");
-				}
-			}
-		}
-
 		private bool BuyCustomMercsViaMenuCondition(MenuCallbackArgs args)
 		{
-			CustomMercData customMercData = custom_merc_data_holder.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && customMercData != null && customMercData.Number > 0)
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
+			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
+			if (customMercData != null && customMercData.Number > 0)
 			{
 				int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
 				if (Hero.MainHero.Gold >= troopRecruitmentCost)
@@ -458,26 +427,11 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private void BuyCustomMercenariesViaGameMenu(CustomMercData customMercData)
-		{
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && customMercData != null && customMercData.Number > 0)
-			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
-				if (Hero.MainHero.Gold >= troopRecruitmentCost)
-				{
-					int numOfTroopPlayerCanBuy = (troopRecruitmentCost == 0) ? customMercData.Number : Hero.MainHero.Gold / troopRecruitmentCost;
-					int numOfMercs = Math.Min(customMercData.Number, numOfTroopPlayerCanBuy);
-					MobileParty.MainParty.MemberRoster.AddToCounts(customMercData.TroopInfoCharObject(), numOfMercs, false, 0, 0, true, -1);
-					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
-					customMercData.ChangeMercenaryCount(-numOfMercs);
-					GameMenu.SwitchToMenu("town_backstreet");
-				}
-			}
-		}
 		private bool BuyCustomMercsViaMenuConditionToPartyLimit(MenuCallbackArgs args)
 		{
-			CustomMercData customMercData = custom_merc_data_holder.dictionaryOfMercAtTownData[MobileParty.MainParty.CurrentSettlement.Town];
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && customMercData != null && customMercData.Number > 0)
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return false;
+			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
+			if (customMercData != null && customMercData.Number > 0)
 			{
 				int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
 				int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
@@ -496,22 +450,26 @@ namespace Bannerlord.CustomTavernMercs
 			return false;
 		}
 
-		private void BuyCustomMercenariesViaGameMenuToPartyLimit(CustomMercData customMercData)
+		private void BuyCustomMecenariesViaGameMenu(bool buyingOne, bool toPartyLimit)
 		{
+			if (MobileParty.MainParty.CurrentSettlement == null || !MobileParty.MainParty.CurrentSettlement.IsTown) return;
+			CustomMercData customMercData = GetCustomMercDataOfPlayerEncounter();
+			if (customMercData == null) return;
 			int numOfTroopSlotsOpen = PartyBase.MainParty.PartySizeLimit - PartyBase.MainParty.NumberOfAllMembers;
-			if (MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && customMercData != null && customMercData.Number > 0 && numOfTroopSlotsOpen > 0)
+			int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
+			if (customMercData.Number > 0 && Hero.MainHero.Gold >= troopRecruitmentCost && (!toPartyLimit || numOfTroopSlotsOpen > 0))
 			{
-				int troopRecruitmentCost = this.troopRecruitmentCost(customMercData);
-				if (Hero.MainHero.Gold >= troopRecruitmentCost)
+				int numOfMercs = 1;
+				if (!buyingOne)
 				{
 					int numOfTroopPlayerCanBuy = (troopRecruitmentCost == 0) ? customMercData.Number : Hero.MainHero.Gold / troopRecruitmentCost;
-					int numOfMercs = Math.Min(customMercData.Number, numOfTroopPlayerCanBuy);
-					numOfMercs = Math.Min(numOfTroopSlotsOpen, numOfMercs);
-					MobileParty.MainParty.MemberRoster.AddToCounts(customMercData.TroopInfoCharObject(), numOfMercs, false, 0, 0, true, -1);
-					GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
-					customMercData.ChangeMercenaryCount(-numOfMercs);
-					GameMenu.SwitchToMenu("town_backstreet");
+					numOfMercs = Math.Min(customMercData.Number, numOfTroopPlayerCanBuy);
+					if (toPartyLimit) numOfMercs = Math.Min(numOfTroopSlotsOpen, numOfMercs);
 				}
+				MobileParty.MainParty.MemberRoster.AddToCounts(customMercData.TroopInfoCharObject(), numOfMercs, false, 0, 0, true, -1);
+				GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, -(numOfMercs * troopRecruitmentCost), false);
+				customMercData.ChangeMercenaryCount(-numOfMercs);
+				GameMenu.SwitchToMenu("town_backstreet");
 			}
 		}
 	}
