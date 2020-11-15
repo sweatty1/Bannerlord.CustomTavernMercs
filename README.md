@@ -32,7 +32,7 @@ C:\Users\*currentUser\Documents\Mount and Blade II Bannerlord\Configs\ModSetting
 Inside of which will be the default example custom json files.\
 Creating your own json file and placing it in this folder will make it appear as a selectable option.\
 Beware that anytime you add or remove a customfile that you should verify your selected option is correct.\
-Check out the wiki page [here](https://github.com/sweatty1/BannerlordMinorClanTroopRecruitment/wiki/Bannerlord-Minor-Clan-Troop-Recruitment-Wiki). If interested in modifying an existing one or creating your own.
+Check out the wiki page [here](https://github.com/sweatty1/Bannerlord.CustomTavernMercs/wiki/Bannerlord-Custom-Tavern-Mercs). If interested in modifying an existing one or creating your own.
 
 # Development
  
