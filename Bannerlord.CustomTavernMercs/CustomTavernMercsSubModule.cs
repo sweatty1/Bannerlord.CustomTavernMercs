@@ -3,9 +3,9 @@ using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 using StoryMode;
 
-namespace MinorClanTroopRecruitment
+namespace Bannerlord.CustomTavernMercs
 {
-    public class MinorClanTroopRecruitmentSubModule : MBSubModuleBase
+    public class CustomTavernMercsSubModule : MBSubModuleBase
     {
         public override void OnCampaignStart(Game game, object gameStarterObject)
         {
@@ -29,7 +29,7 @@ namespace MinorClanTroopRecruitment
 
         private void AddBehaviors(CampaignGameStarter gameInitializer)
         {
-            gameInitializer.AddBehavior(new RecruitMinorClanTroopBehaviors());
+            gameInitializer.AddBehavior(new CustomTavernMercsBehaviors());
         }
     }
 }

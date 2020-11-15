@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 
-namespace MinorClanTroopRecruitment
+namespace Bannerlord.CustomTavernMercs
 {
-    public class MinorClanMercData
+    public class CustomMercData
     {
-		public MinorClanMercData(List<TroopInfo> possibleMercTroopsTypes)
+		public CustomMercData(List<TroopInfo> possibleMercTroopsTypes)
 		{
 			PossibleMercTroopInfo = possibleMercTroopsTypes;
 		}

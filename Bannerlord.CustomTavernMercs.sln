@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinorClanTroopRecruitment", "MinorClanTroopRecruitment\MinorClanTroopRecruitment.csproj", "{6FD686BF-7EF4-481C-846C-8D31B6DD12B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bannerlord.CustomTavernMercs", "Bannerlord.CustomTavernMercs\Bannerlord.CustomTavernMercs.csproj", "{6FD686BF-7EF4-481C-846C-8D31B6DD12B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

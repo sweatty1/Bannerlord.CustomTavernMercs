@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TaleWorlds.CampaignSystem;
 
-namespace MinorClanTroopRecruitment
+namespace Bannerlord.CustomTavernMercs
 {
-    public class CustomMercData
+    public class CustomListUnitInfo
     {
         public string TroopCharacterId { get; set; }
         public bool CustomCost { get; set; }
