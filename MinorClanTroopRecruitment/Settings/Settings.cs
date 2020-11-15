@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace MinorClanTroopRecruitment.Settings
+namespace Bannerlord.CustomTavernMercs.Settings
 {
     class Settings : AttributeGlobalSettings<Settings>
     {
