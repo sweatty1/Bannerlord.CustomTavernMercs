@@ -12,9 +12,9 @@ namespace Bannerlord.CustomTavernMercs.Settings
     class Settings : AttributeGlobalSettings<Settings>
     {
 
-        private string CustomJsonFolder => Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\MinorClanTroopRecruitment\\CustomOptions");
-        public override string Id => "MinorClanTroopRecruitment";
-        public override string DisplayName => "Minor Clan Troop Recruitment";
+        private string CustomJsonFolder => Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\CustomTavernMercs");
+        public override string Id => "CustomTavernMercs";
+        public override string DisplayName => "Custom Tavern Mercenaries";
         private List<string> spawnOptionsProgrammatically => new List<string> { "Any Culture", "Same Culture Only" };
         public Settings()
         {

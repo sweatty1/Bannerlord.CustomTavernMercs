@@ -89,7 +89,7 @@ namespace Bannerlord.CustomTavernMercs
 
         private Dictionary<Town, CustomMercData> CustomBuilder()
         {
-            string customJsonPath = Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\MinorClanTroopRecruitment\\CustomOptions");
+            string customJsonPath = Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\CustomTavernMercs");
             string customJsonName = Settings.Settings.Instance.RecruitmentSettings.SelectedValue;
             string pathToJson = Path.Combine(customJsonPath, customJsonName);
 
