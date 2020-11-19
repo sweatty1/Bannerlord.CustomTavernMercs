@@ -1,15 +1,15 @@
 # Bannerlord.CustomTavernMercs
 
-Adds additional mercenaries to the tavern. The possible mercenaries is customizable, from a default setting of minor clans or from self made json files. This mod does not replace the normal game's tavern mercenaries.
+Adds additional mercenaries to the tavern. The possible mercenaries available is customizable, from a default setting of minor clans or from self made json files. This mod does not replace the normal game's tavern mercenaries.
 
 Link to Nexus: [here](https://www.nexusmods.com/mountandblade2bannerlord/mods/1520/)
 
 # Features
-Ability recruit troops either inside of the tavern itself or from the town's tavern game menu.
-
+Ability recruit troops either inside of the tavern itself or from the town's tavern game menu.\
 On new campaign start or load new mercenaries will be populated in every town/city.\
-The mercenaries avaliable are derived from user created json files or from minor clans (default setting). Depending on what setting is selected.\
-Compatable with other mods like Calradia at War, which adds custom trooptypes and Minor Clans. With the default minor clans settings adding the new clans into the pool and the custom troop types can be added to user's custom json.\
+The mercenaries available are derived from user created json files or from minor clans (default setting). Depending on what setting is selected.\
+Compatible with other mods like Calradia at War, which adds custom troop types and Minor Clans. With the default minor clans settings adding the new clans into the pool and the custom troop types can be added to user's custom json.\
+Does not replace the games normal tavern mercenaries.\
 The mod can be removed at anytime and not affect current saves.
 
 # Manual Installing
