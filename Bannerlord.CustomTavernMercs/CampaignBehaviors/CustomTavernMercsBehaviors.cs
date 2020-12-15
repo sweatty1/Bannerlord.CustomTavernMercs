@@ -84,7 +84,12 @@ namespace Bannerlord.CustomTavernMercs
 
 		private LocationCharacter CreateCustomMercenary(CultureObject culture, LocationCharacter.CharacterRelations relation)
 		{
+
 			Settlement currentSettlement = MobileParty.MainParty.CurrentSettlement;
+			if(Hero.MainHero.IsPrisoner && Hero.MainHero.PartyBelongedToAsPrisoner.IsSettlement)
+			{
+				currentSettlement = Hero.MainHero.PartyBelongedToAsPrisoner.Settlement;
+			}
 			string spawnTag = "npc_common";
 			if(Settings.Settings.Instance.ShareMercenarySpawnTag)
 			{
@@ -216,7 +221,7 @@ namespace Bannerlord.CustomTavernMercs
 			{
 				return false;
 			}
-			return CampaignMission.Current.Location.StringId == "tavern" && customMercData.TroopInfoCharObject().Name == CharacterObject.OneToOneConversationCharacter.Name && CharacterObject.OneToOneConversationCharacter.IsSoldier;
+			return CampaignMission.Current.Location.StringId == "tavern" && customMercData.TroopInfoCharObject().Name == CharacterObject.OneToOneConversationCharacter.Name;
 		}
 
 		// Conditions for starting line dialog
