@@ -44,7 +44,7 @@ namespace Bannerlord.CustomTavernMercs
 				}
 			}
 			// Add Character if inside of town
-			if (Settlement.CurrentSettlement != null && !Hero.MainHero.IsPrisoner)
+			if (Settlement.CurrentSettlement != null)
 			{
 				AddCustomMercenaryCharacterToTavern(Settlement.CurrentSettlement);
 			}
@@ -70,11 +70,16 @@ namespace Bannerlord.CustomTavernMercs
 		}
 
 		// Adding Character to the Tavern
-		private void AddCustomMercenaryCharacterToTavern(Settlement settlement)
+		private void AddCustomMercenaryCharacterToTavern(Settlement settlement, CharacterObject oldTroopType = null)
 		{
-			if (settlement.LocationComplex != null && settlement.IsTown && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
+			if (PlayerEncounter.LocationEncounter != null && !Hero.MainHero.IsPrisoner && settlement.IsTown && settlement.LocationComplex != null && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
 			{
-				Location locationWithId = Settlement.CurrentSettlement.LocationComplex.GetLocationWithId("tavern");
+				if (settlement == Settlement.CurrentSettlement && oldTroopType != null)
+				{
+					settlement.LocationComplex.GetLocationWithId("tavern").RemoveAllCharacters((LocationCharacter x) => (x.Character.Occupation == oldTroopType.Occupation && x.Character.Name == oldTroopType.Name));
+				}
+			
+				Location locationWithId = settlement.LocationComplex.GetLocationWithId("tavern");
 				if (locationWithId != null)
 				{
 					locationWithId.AddLocationCharacters(new CreateLocationCharacterDelegate(this.CreateCustomMercenary), settlement.Culture, LocationCharacter.CharacterRelations.Neutral, 1);
@@ -84,27 +89,9 @@ namespace Bannerlord.CustomTavernMercs
 
 		private LocationCharacter CreateCustomMercenary(CultureObject culture, LocationCharacter.CharacterRelations relation)
 		{
-
 			Settlement currentSettlement = MobileParty.MainParty.CurrentSettlement;
-			if(Hero.MainHero.IsPrisoner && Hero.MainHero.PartyBelongedToAsPrisoner.IsSettlement)
-			{
-				currentSettlement = Hero.MainHero.PartyBelongedToAsPrisoner.Settlement;
-			}
-			string spawnTag = "npc_common";
-			if(Settings.Settings.Instance.ShareMercenarySpawnTag)
-			{
-				spawnTag = "spawnpoint_mercenary";
-			}
+			string spawnTag = Settings.Settings.Instance.ShareMercenarySpawnTag ? "spawnpoint_mercenary" : "npc_common";
 			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(custom_merc_data_holder.dictionaryOfMercAtTownData[currentSettlement.Town].TroopInfoCharObject(), -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), spawnTag, true, relation, null, false, false, null, false, false, true);
-		}
-
-		private void DoesCustomMercenaryCharacterNeedRefresh(Settlement settlement, CharacterObject oldTroopType)
-		{
-			if (settlement.IsTown && settlement == Settlement.CurrentSettlement && PlayerEncounter.LocationEncounter != null && settlement.LocationComplex != null && (CampaignMission.Current == null || GameStateManager.Current.ActiveState != CampaignMission.Current.State))
-			{
-				Settlement.CurrentSettlement.LocationComplex.GetLocationWithId("tavern").RemoveAllCharacters((LocationCharacter x) => (x.Character.Occupation == oldTroopType.Occupation && x.Character.Name == oldTroopType.Name));
-				AddCustomMercenaryCharacterToTavern(settlement);
-			}
 		}
 
 		// Update customMerc troops
@@ -149,7 +136,7 @@ namespace Bannerlord.CustomTavernMercs
 			// need way to trigger spawn of hire guy in tavern when inside of town on a daily update
 			if (oldTroopType != null)
 			{
-				DoesCustomMercenaryCharacterNeedRefresh(town.Settlement, oldTroopType);
+				AddCustomMercenaryCharacterToTavern(town.Settlement, oldTroopType);
 			}
 		}
 
