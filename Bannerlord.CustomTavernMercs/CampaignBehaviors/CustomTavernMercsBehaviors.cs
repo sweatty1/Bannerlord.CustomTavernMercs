@@ -72,7 +72,7 @@ namespace Bannerlord.CustomTavernMercs
 		// Adding Character to the Tavern
 		private void AddCustomMercenaryCharacterToTavern(Settlement settlement, CharacterObject oldTroopType = null)
 		{
-			if (PlayerEncounter.LocationEncounter != null && !Hero.MainHero.IsPrisoner && settlement.IsTown && settlement.LocationComplex != null && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
+			if (!Hero.MainHero.IsPrisoner && settlement.IsTown && settlement.LocationComplex != null && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
 			{
 				if (settlement == Settlement.CurrentSettlement && oldTroopType != null)
 				{
@@ -134,7 +134,8 @@ namespace Bannerlord.CustomTavernMercs
 
 			// Since we don't have access to MercenaryNUmberChangedInTown or MercenaryTroopChangedInTown
 			// need way to trigger spawn of hire guy in tavern when inside of town on a daily update
-			if (oldTroopType != null)
+			// instead of PlayerEncounter.LocationEncounter != null just using currentSettlement to determine if inside of settlement
+			if (oldTroopType != null && MobileParty.MainParty.CurrentSettlement != null && MobileParty.MainParty.CurrentSettlement.IsTown && MobileParty.MainParty.CurrentSettlement.Town == town)
 			{
 				AddCustomMercenaryCharacterToTavern(town.Settlement, oldTroopType);
 			}
