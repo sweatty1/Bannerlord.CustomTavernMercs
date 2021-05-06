@@ -1,7 +1,7 @@
 ﻿<Module>
 	<Name value="Custom Tavern Mercenaries"/>
 	<Id value="Bannerlord.CustomTavernMercs"/>
-	<Version value="v1.1.5"/>
+	<Version value="v1.1.6"/>
 	<SingleplayerModule value="true"/>
 	<MultiplayerModule value="false"/>
 	<DependedModules>
@@ -10,7 +10,6 @@
 		<DependedModule Id="Sandbox"/>
 		<DependedModule Id="StoryMode" />
 		<DependedModule Id="Bannerlord.MBOptionScreen"/>
-		<DependedModule Id="Bannerlord.MBOptionScreen.MCMv3"/>
 	</DependedModules>
 	<SubModules>
 		<SubModule>
