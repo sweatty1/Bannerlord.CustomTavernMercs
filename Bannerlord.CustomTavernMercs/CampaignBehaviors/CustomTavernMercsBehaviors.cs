@@ -17,7 +17,7 @@ namespace Bannerlord.CustomTavernMercs
 
 		public override void RegisterEvents()
 		{
-			CampaignEvents.OnNewGameCreatedEvent8.AddNonSerializedListener(this, new Action(this.OnAfterNewGameCreated));
+			CampaignEvents.OnNewGameCreatedPartialFollowUpEndEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnAfterNewGameCreated));
 			CampaignEvents.SettlementEntered.AddNonSerializedListener(this, new Action<MobileParty, Settlement, Hero>(this.OnSettlementEntered));
 			CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnGameLoaded));
 			CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnSessionLaunched));
@@ -51,7 +51,7 @@ namespace Bannerlord.CustomTavernMercs
 		}
 
 		// Only triggers on new campaigns created
-		public void OnAfterNewGameCreated()
+		private void OnAfterNewGameCreated(CampaignGameStarter starter)
 		{
 			if (custom_merc_data_holder == null)
 			{

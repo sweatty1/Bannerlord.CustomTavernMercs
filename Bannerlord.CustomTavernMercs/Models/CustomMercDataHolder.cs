@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
+using System.Linq;
 
 namespace Bannerlord.CustomTavernMercs
 {
@@ -78,7 +79,7 @@ namespace Bannerlord.CustomTavernMercs
 
         private Dictionary<Town, CustomMercData> CustomBuilder()
         {
-            string customJsonPath = Path.Combine(TaleWorlds.Engine.Utilities.GetConfigsPath(), "ModSettings\\CustomTavernMercs");
+            string customJsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Mount and Blade II Bannerlord\\Configs\\ModSettings\\CustomTavernMercs");
             string customJsonName = Settings.Settings.Instance.RecruitmentSettings.SelectedValue;
             string pathToJson = Path.Combine(customJsonPath, customJsonName);
 
