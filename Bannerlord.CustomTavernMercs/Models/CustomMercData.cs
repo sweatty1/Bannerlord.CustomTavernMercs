@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.SandBox;
+using TaleWorlds.Core;
 
 namespace Bannerlord.CustomTavernMercs
 {
@@ -14,6 +17,8 @@ namespace Bannerlord.CustomTavernMercs
 		public int Number { get; private set; }
 
 		public List<TroopInfo> PossibleMercTroopInfo { get; private set; }
+
+		public LocationCharacter LocationChar { get; private set; }
 
 		public CharacterObject TroopInfoCharObject()
 		{
@@ -58,11 +63,23 @@ namespace Bannerlord.CustomTavernMercs
 			}
 		}
 
-		public bool HasAvailableMercenary(Occupation occupation = Occupation.NotAssigned)
+		public bool HasAvailableMercenary()
 		{
-			return TroopInfo != null && TroopInfoCharObject() != null && Number > 0 && (occupation == Occupation.NotAssigned || TroopInfoCharObject().Occupation == occupation);
+			return TroopInfo != null && TroopInfoCharObject() != null && Number > 0;
 		}
-	}
+
+		public LocationCharacter UpdateLocationChar(CultureObject culture, LocationCharacter.CharacterRelations relation)
+		{
+			LocationChar = CreateCustomMercenary();
+			return LocationChar;
+		}
+
+		private LocationCharacter CreateCustomMercenary()
+		{
+			string spawnTag = Settings.Settings.Instance.ShareMercenarySpawnTag ? "spawnpoint_mercenary" : "npc_common";
+			return new LocationCharacter(new AgentData(new SimpleAgentOrigin(TroopInfoCharObject(), -1, null, default(UniqueTroopDescriptor))).Monster(Campaign.Current.HumanMonsterSettlement).NoHorses(true), new LocationCharacter.AddBehaviorsDelegate(SandBoxManager.Instance.AgentBehaviorManager.AddOutdoorWandererBehaviors), spawnTag, true, LocationCharacter.CharacterRelations.Neutral, null, false, false, null, false, false, true);
+		}
+    }
 
 	public class TroopInfo
 	{
