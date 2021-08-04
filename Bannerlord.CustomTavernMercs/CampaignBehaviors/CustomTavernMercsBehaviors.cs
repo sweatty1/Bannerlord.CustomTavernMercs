@@ -19,6 +19,7 @@ namespace Bannerlord.CustomTavernMercs
 		{
 			CampaignEvents.OnNewGameCreatedPartialFollowUpEndEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnAfterNewGameCreated));
 			CampaignEvents.SettlementEntered.AddNonSerializedListener(this, new Action<MobileParty, Settlement, Hero>(this.OnSettlementEntered));
+			CampaignEvents.OnSettlementLeftEvent.AddNonSerializedListener(this, new Action<MobileParty, Settlement>(this.OnSettlementExit));
 			CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnGameLoaded));
 			CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnSessionLaunched));
 			if (Settings.Settings.Instance.UpdateTiming.SelectedValue == "Weekly")
@@ -69,14 +70,29 @@ namespace Bannerlord.CustomTavernMercs
 			AddCustomMercenaryCharacterToTavern(settlement);
 		}
 
+		public void OnSettlementExit(MobileParty mobileParty, Settlement settlement)
+        {
+			if (mobileParty != MobileParty.MainParty) return;
+			RemoveMercenaryCharacterFromTavern(settlement);
+		}
+
+		private void RemoveMercenaryCharacterFromTavern(Settlement settlement)
+        {
+			if (settlement.IsTown && settlement.LocationComplex != null && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary())
+            {
+                CharacterObject troopType = custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].TroopInfoCharObject();
+				settlement.LocationComplex.GetLocationWithId("tavern").RemoveAllCharacters((LocationCharacter x) => (x.Character.Name == troopType.Name));
+			}
+        }
+
 		// Adding Character to the Tavern
 		private void AddCustomMercenaryCharacterToTavern(Settlement settlement, CharacterObject oldTroopType = null)
 		{
-			if (!Hero.MainHero.IsPrisoner && settlement.IsTown && settlement.LocationComplex != null && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary(Occupation.NotAssigned))
+			if (!Hero.MainHero.IsPrisoner && settlement.IsTown && !settlement.IsUnderSiege && settlement.LocationComplex != null && custom_merc_data_holder.dictionaryOfMercAtTownData[settlement.Town].HasAvailableMercenary())
 			{
 				if (settlement == Settlement.CurrentSettlement && oldTroopType != null)
 				{
-					settlement.LocationComplex.GetLocationWithId("tavern").RemoveAllCharacters((LocationCharacter x) => (x.Character.Occupation == oldTroopType.Occupation && x.Character.Name == oldTroopType.Name));
+					settlement.LocationComplex.GetLocationWithId("tavern").RemoveAllCharacters((LocationCharacter x) => (x.Character.Name == oldTroopType.Name));
 				}
 			
 				Location locationWithId = settlement.LocationComplex.GetLocationWithId("tavern");

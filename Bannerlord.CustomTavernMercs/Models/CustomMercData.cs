@@ -58,9 +58,9 @@ namespace Bannerlord.CustomTavernMercs
 			}
 		}
 
-		public bool HasAvailableMercenary(Occupation occupation = Occupation.NotAssigned)
+		public bool HasAvailableMercenary()
 		{
-			return TroopInfo != null && TroopInfoCharObject() != null && Number > 0 && (occupation == Occupation.NotAssigned || TroopInfoCharObject().Occupation == occupation);
+			return TroopInfo != null && TroopInfoCharObject() != null && Number > 0;
 		}
 	}
 
